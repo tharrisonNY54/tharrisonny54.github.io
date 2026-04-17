@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode */
+    --color-bg: 244 241 236;
+    --color-bg-subtle: 235 231 224;
+    --color-text: 28 27 24;
+    --color-text-muted: 110 106 98;
+    --color-accent: 155 107 26;
+    --color-border: 210 205 196;
+  }
+
+  .dark {
+    /* Dark mode */
+    --color-bg: 14 14 12;
+    --color-bg-subtle: 22 22 19;
+    --color-text: 230 226 217;
+    --color-text-muted: 118 113 104;
+    --color-accent: 201 160 80;
+    --color-border: 40 39 35;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg text-text font-sans antialiased;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  ::selection {
+    background-color: rgb(var(--color-accent) / 0.22);
+  }
+}
