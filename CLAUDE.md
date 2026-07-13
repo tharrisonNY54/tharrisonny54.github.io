@@ -71,8 +71,11 @@ template, a crypto dashboard, or sci-fi UI.
   database.
 - Dev machine is Windows/PowerShell — all build/preprocessing scripts must be cross-platform Node
   (`.mjs`), never bash.
-- Deploy: Vercel. Include `next/og` per-page OG images in the telemetry style (dark, mono,
-  project ID + title).
+- Deploy: **GitHub Pages** via static export (`output: "export"`, `trailingSlash: true`,
+  `images.unoptimized`). No server runtime — every route must be statically generated; dynamic
+  `[slug]` routes require `generateStaticParams`. OG images use build-time `next/og`
+  `opengraph-image` files (generated as static PNGs), telemetry style (dark, mono, project ID +
+  title). GitHub Actions workflow builds `out/` and publishes via `actions/deploy-pages`.
 - Accessibility: semantic HTML, visible cyan focus rings, keyboard navigable, contrast AA minimum
   (verify `#a3a3a3` on `#0a0a0a` for its sizes).
 - SEO: metadata API, sitemap, robots, RSS for /writing, JSON-LD Person schema.
