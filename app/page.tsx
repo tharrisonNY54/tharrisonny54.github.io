@@ -1,3 +1,4 @@
+import { Hero } from "@/components/hero/Hero";
 import { SITE } from "@/lib/site";
 
 export default function HomePage() {
@@ -25,11 +26,9 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Fixed-aspect placeholder reserves the hero footprint — zero layout shift. */}
-        <div
-          className="aspect-square w-full border border-border"
-          aria-hidden
-        />
+        {/* Point-cloud hero. The canvas lazy-loads client-side; the container
+            reserves a fixed aspect-square footprint so there is zero layout shift. */}
+        <Hero />
       </section>
 
       {/* Selected work — Phase 2 renders the manifest table here. */}
