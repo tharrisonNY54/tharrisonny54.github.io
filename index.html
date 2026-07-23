@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trey Harrison — Computer Scientist · XR &amp; Spacecraft</title>
+    <meta
+      name="description"
+      content="Trey Harrison — computer scientist working on spacecraft geometry for NASA's Aspera mission and volumetric capture at the University of Arizona."
+    />
+    <meta property="og:title" content="Trey Harrison" />
+    <meta property="og:description" content="Computer Scientist · XR &amp; Spacecraft — Tucson, AZ" />
+    <meta name="theme-color" content="#08090b" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="module" src="/src/pages/index-entry.ts"></script>
+  </head>
+  <body class="is-loading">
+    <a class="skip" href="#main">Skip to content</a>
+    <div data-header></div>
+
+    <div class="shell">
+      <main id="main">
+        <!-- ============ HERO ============ -->
+        <section class="work-hero work-hero--center" aria-label="Introduction">
+          <img
+            class="work-hero__bg"
+            src="/img/aspera-orbit.webp"
+            alt=""
+            width="1200"
+            height="670"
+            loading="eager"
+            fetchpriority="high"
+          />
+          <div class="work-hero__shade" aria-hidden="true"></div>
+          <div class="work-hero__grain" aria-hidden="true"></div>
+          <span class="work-hero__credit mono mono--micro">ASPERA ORBIT RENDER / NASA &middot; UARIZONA</span>
+          <div class="work-hero__meta" aria-hidden="true">
+            <span class="mono mono--micro">32.2319&deg;N&nbsp;110.9501&deg;W</span>
+            <span class="mono mono--micro" data-clock></span>
+          </div>
+          <div class="work-hero__inner">
+            <h1 class="hero__title enter" style="--enter-delay: 220ms">
+              I write spacecraft geometry software for NASA&rsquo;s Aspera mission and build
+              volumetric&#8209;capture pipelines at the University of Arizona.
+            </h1>
+          </div>
+        </section>
+
+        <!-- ============ ABOUT + SCAN ============ -->
+        <section class="section" aria-labelledby="about-h">
+          <div class="wrap">
+            <div class="scan-row">
+              <div
+                class="scan-stage reveal"
+                role="img"
+                aria-label="Volumetric capture of Trey Harrison rendered as a point cloud with a scanline sweep"
+              >
+                <div class="scan-stage__canvas" aria-hidden="true"></div>
+                <div class="scan-stage__tag"><span class="status"><span class="status__dot"></span>Live render &middot; drag to rotate</span></div>
+                <div class="scan-stage__meta">
+                  <span class="mono mono--micro">VOLUMETRIC SCAN 001</span>
+                  <span class="mono mono--micro">88,704 PTS &middot; CAPTURED IN-HOUSE</span>
+                </div>
+                <div class="scan-mode" role="group" aria-label="Scan display mode">
+                  <button type="button" data-mode="points" aria-pressed="true">Points</button>
+                  <button type="button" data-mode="mesh" aria-pressed="false">Capture</button>
+                </div>
+              </div>
+              <div class="scan-row__text">
+                <span class="mono reveal" id="about-h">About</span>
+                <div class="about__body">
+                  <p class="reveal">
+                    I study computer science at the University of Arizona, with minors in
+                    mathematics and AI, on an accelerated track toward a master&rsquo;s in 2029.
+                  </p>
+                  <p class="reveal">
+                    My work sits where geometry meets hardware. On the Aspera mission I write SPICE
+                    tooling that turns orbital data into pointing and visibility answers. At the
+                    Center for Digital Humanities I scan people and places &mdash; LIDAR in
+                    Cura&ccedil;ao cemeteries, volumetric capture stages &mdash; and build the
+                    Three.js pipelines that put them on the web.
+                  </p>
+                  <p class="reveal">
+                    When Niantic shut down 8th Wall, I reverse engineered its volumetric format and
+                    moved 200+ AR projects onto university infrastructure. I like problems shaped
+                    like that one. The figure on the left is one of our captures &mdash; me, as
+                    88,704 points.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ EXPERIENCE ============ -->
+        <section class="section" aria-labelledby="index-h">
+          <div class="wrap">
+            <div class="section-head reveal">
+              <h2 id="index-h">Experience</h2>
+              <span class="mono">2025 &mdash; present</span>
+            </div>
+            <div class="xp-list">
+              <a class="xp-row reveal" href="/work.html#aspera">
+                <span class="xp-row__no">01</span>
+                <span class="xp-row__main">
+                  <span class="xp-row__title">NASA Aspera Mission</span>
+                  <span class="xp-row__role">Software Developer &middot; spacecraft geometry &amp; SPICE</span>
+                </span>
+                <span class="xp-row__date">May 2026 &mdash; present</span>
+                <span class="xp-row__arrow">&#8599;</span>
+              </a>
+              <a class="xp-row reveal" href="/work.html#cdh">
+                <span class="xp-row__no">02</span>
+                <span class="xp-row__main">
+                  <span class="xp-row__title">Center for Digital Humanities</span>
+                  <span class="xp-row__role">Student Developer &middot; volumetric capture &amp; WebAR</span>
+                </span>
+                <span class="xp-row__date">May 2025 &mdash; present</span>
+                <span class="xp-row__arrow">&#8599;</span>
+              </a>
+              <a class="xp-row reveal" href="/work.html#ta">
+                <span class="xp-row__no">03</span>
+                <span class="xp-row__main">
+                  <span class="xp-row__title">Data Structures &amp; Algorithms</span>
+                  <span class="xp-row__role">Undergraduate Teaching Assistant</span>
+                </span>
+                <span class="xp-row__date">Spring 2026</span>
+                <span class="xp-row__arrow">&#8599;</span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ PROJECTS (compact) ============ -->
+        <section class="section--tight" aria-labelledby="proj-h" style="padding-bottom: var(--section)">
+          <div class="wrap">
+            <div class="section-head reveal">
+              <h2 id="proj-h">Projects</h2>
+              <a class="mono link link--arrow" href="/projects.html">All projects</a>
+            </div>
+            <div class="index-list">
+              <a class="index-row index-row--compact reveal" href="/projects.html">
+                <span class="index-row__no">P.01</span>
+                <span class="index-row__title index-row__title--sm">TEMI Robot Messaging</span>
+                <span class="index-row__meta">Android &middot; AWS SES</span>
+              </a>
+              <a class="index-row index-row--compact reveal" href="/projects.html">
+                <span class="index-row__no">P.02</span>
+                <span class="index-row__title index-row__title--sm">Q# RAG Chatbot</span>
+                <span class="index-row__meta">Mistral-7B &middot; llama-cpp</span>
+              </a>
+              <a class="index-row index-row--compact reveal" href="/projects.html">
+                <span class="index-row__no">P.03</span>
+                <span class="index-row__title index-row__title--sm">This site</span>
+                <span class="index-row__meta">Three.js &middot; GLSL</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <div data-footer></div>
+    </div>
+  </body>
+</html>

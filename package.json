@@ -1,30 +1,30 @@
 {
-  "name": "treyharrison-dev",
-  "version": "0.1.0",
+  "name": "trey-harrison-portfolio",
+  "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "typecheck": "tsc --noEmit",
-    "sample": "node scripts/sample-pointcloud.mjs"
+    "bake": "node scripts/bake-points.mjs",
+    "bake:mesh": "node scripts/bake-mesh.mjs",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.6.1",
-    "next": "^15.1.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "@fontsource/instrument-serif": "^5.1.0",
+    "@fontsource/space-grotesk": "^5.1.0",
+    "@fontsource/space-mono": "^5.1.0",
     "three": "^0.171.0"
   },
   "devDependencies": {
-    "@gltf-transform/core": "^4.4.1",
-    "@tailwindcss/postcss": "^4.0.0",
-    "@types/node": "^22.10.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@gltf-transform/core": "^4.1.0",
+    "@gltf-transform/extensions": "^4.4.1",
+    "@gltf-transform/functions": "^4.4.1",
+    "@types/node": "^26.1.1",
     "@types/three": "^0.171.0",
-    "tailwindcss": "^4.0.0",
-    "typescript": "^5.7.0"
+    "puppeteer-core": "^25.3.0",
+    "sharp": "^0.33.5",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0"
   }
 }

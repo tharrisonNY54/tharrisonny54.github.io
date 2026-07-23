@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Work — Trey Harrison</title>
+    <meta
+      name="description"
+      content="Selected work: spacecraft geometry tooling for NASA's Aspera mission and volumetric capture pipelines for the Center for Digital Humanities."
+    />
+    <meta name="theme-color" content="#08090b" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="module" src="/src/pages/work-entry.ts"></script>
+  </head>
+  <body class="is-loading">
+    <a class="skip" href="#main">Skip to content</a>
+    <div data-header></div>
+
+    <div class="shell">
+      <main id="main">
+        <header class="sat-hero" aria-label="Work introduction">
+          <div class="sat-stage__canvas" aria-hidden="true"></div>
+          <span class="sat-hero__tag status enter" style="--enter-delay: 500ms"><span class="status__dot"></span>Procedural model &middot; generated in-browser</span>
+          <div class="sat-hero__meta" aria-hidden="true">
+            <span class="mono mono--micro">ASPERA / POINT-CLOUD STUDY</span>
+            <span class="mono mono--micro">~30,000 PTS &middot; LIVE</span>
+          </div>
+          <div class="sat-hero__inner">
+            <span class="mono page-head__index enter" style="--enter-delay: 80ms">Work / 2025 &mdash; present</span>
+            <h1 class="enter" style="--enter-delay: 180ms">
+              Three roles, one thread:<br />
+              <span class="serif">geometry you can trust.</span>
+            </h1>
+            <p class="page-head__lead enter" style="--enter-delay: 300ms">
+              SPICE kernels and visibility tooling for a NASA telescope. Three.js viewers and AWS
+              pipelines for volumetric archives. Test infrastructure for a 100-student course.
+              Coordinate frames run through all of it.
+            </p>
+          </div>
+        </header>
+
+        <!-- ============ CASE 01 — ASPERA ============ -->
+        <article class="wrap case" id="aspera" aria-labelledby="aspera-h">
+          <div class="case__head reveal">
+            <span class="case__no">W.01</span>
+            <div class="case__titles">
+              <h3 id="aspera-h">NASA Aspera Mission</h3>
+              <div class="case__role">
+                <span class="mono mono--micro">Software Developer</span>
+                <span class="mono mono--micro">May 2026 &mdash; present</span>
+                <span class="mono mono--micro">University of Arizona</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="case__body">
+            <p class="case__lede reveal">
+              Aspera is a NASA SmallSat built to observe extreme-ultraviolet emission from the hot
+              gas around galaxies &mdash; the <span class="serif">circumgalactic medium</span> &mdash;
+              light that has never been mapped before.
+            </p>
+            <div class="case__detail reveal">
+              <p>
+                I develop the mission&rsquo;s geometry and ephemeris tooling with NASA&rsquo;s SPICE
+                toolkit: generating kernels that compute satellite position, attitude, and
+                ground-track geometry from orbital data.
+              </p>
+              <p>
+                I also build the attitude and clock kernels for the pointing instrument, converting
+                camera-matrix data into SPICE-native frames so the team can run target-visibility
+                analysis &mdash; the answer to &ldquo;can we see this galaxy right now?&rdquo;
+                Around 100 researchers work against these products.
+              </p>
+              <div class="tags">
+                <span class="tag">SPICE</span>
+                <span class="tag">Python</span>
+                <span class="tag">Ephemeris</span>
+                <span class="tag">Attitude kernels</span>
+                <span class="tag">EUV astronomy</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="figrow">
+            <figure class="figure reveal">
+              <img src="/img/aspera-cleanroom.webp" alt="The Aspera flight unit mounted in a thermal vacuum chamber, solar panels folded" width="1140" height="764" loading="lazy" />
+              <figcaption>
+                <span class="mono mono--micro">Flight unit, thermal-vac testing</span>
+                <span class="mono mono--micro">FIG. 01</span>
+              </figcaption>
+            </figure>
+            <figure class="figure reveal" data-delay="120">
+              <img src="/img/aspera-euv.webp" alt="Diagram of Aspera observing extreme-ultraviolet emission from the circumgalactic medium of a distant galaxy" width="330" height="330" loading="lazy" />
+              <figcaption>
+                <span class="mono mono--micro">EUV sightline to the CGM</span>
+                <span class="mono mono--micro">FIG. 02</span>
+              </figcaption>
+            </figure>
+          </div>
+        </article>
+
+        <!-- ============ CASE 02 — CDH ============ -->
+        <article class="wrap case" id="cdh" aria-labelledby="cdh-h">
+          <div class="case__head reveal">
+            <span class="case__no">W.02</span>
+            <div class="case__titles">
+              <h3 id="cdh-h">Center for Digital Humanities</h3>
+              <div class="case__role">
+                <span class="mono mono--micro">Student Developer</span>
+                <span class="mono mono--micro">May 2025 &mdash; present</span>
+                <span class="mono mono--micro">University of Arizona</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="case__body">
+            <p class="case__lede reveal">
+              Cultural preservation with a scanner: LIDAR surveys of cemeteries in
+              Cura&ccedil;ao, on-site volumetric recordings, and the
+              <span class="serif">WebAR pipelines</span> that make them public.
+            </p>
+            <div class="case__detail reveal">
+              <p>
+                I build and maintain the center&rsquo;s Three.js viewers and the AWS
+                S3/CloudFront asset pipeline behind them. The hero of this site runs on the same
+                capture stack &mdash; that point cloud is a scan from our stage.
+              </p>
+              <p>
+                When Niantic shut down 8th Wall, the center&rsquo;s AR catalog was set to vanish
+                with it. I reverse engineered the proprietary volumetric format and migrated 200+
+                projects onto university infrastructure. I&rsquo;ve since taught
+                volumetric-capture and AR workflows to graduate courses, and collaborated with
+                institutions including the Smithsonian.
+              </p>
+              <div class="tags">
+                <span class="tag">Three.js</span>
+                <span class="tag">Volumetric capture</span>
+                <span class="tag">LIDAR</span>
+                <span class="tag">Gaussian splatting</span>
+                <span class="tag">AWS S3 / CloudFront</span>
+                <span class="tag">Reverse engineering</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ============ CASE 03 — DSA TA ============ -->
+        <article class="wrap case" id="ta" aria-labelledby="ta-h">
+          <div class="case__head reveal">
+            <span class="case__no">W.03</span>
+            <div class="case__titles">
+              <h3 id="ta-h">Data Structures &amp; Algorithms TA</h3>
+              <div class="case__role">
+                <span class="mono mono--micro">Undergraduate Teaching Assistant</span>
+                <span class="mono mono--micro">Spring 2026</span>
+                <span class="mono mono--micro">University of Arizona</span>
+              </div>
+            </div>
+          </div>
+          <div class="case__body">
+            <p class="case__lede reveal">
+              A semester inside a 100-student course &mdash; from the grading side.
+            </p>
+            <div class="case__detail reveal">
+              <p>
+                Graded programming projects and exams, wrote test cases, and tracked student
+                outcomes for the CS department&rsquo;s data structures course. Reading a
+                semester of other people&rsquo;s code is its own kind of education.
+              </p>
+            </div>
+          </div>
+        </article>
+
+      </main>
+
+      <div data-footer></div>
+    </div>
+  </body>
+</html>

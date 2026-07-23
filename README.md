@@ -1,100 +1,35 @@
-# tharrisonny54.github.io
+# treyharrison — portfolio
 
-Personal portfolio — [tharrisonny54.github.io](https://tharrisonny54.github.io/)
+Personal portfolio for Trey Harrison, deployed to GitHub Pages from `main`.
 
-Vite + React + TypeScript + Tailwind CSS + Framer Motion.
+The hero is a volumetric capture rendered as a ~90k-point cloud in a custom
+Three.js shader — it self-assembles on load and reacts to the cursor. The
+Aspera satellite on the Work page is generated procedurally in the browser.
 
-## Local development
+## Stack
 
-```bash
-npm install
-npm run dev
-```
+- Vite (multi-page: `index` / `work` / `projects` / `contact`)
+- Three.js + hand-written GLSL, TypeScript, hand-written CSS
+- Self-hosted fonts via Fontsource (Space Grotesk / Instrument Serif / Space Mono)
 
-Opens at http://localhost:5173.
+## Commands
 
-## Build
+| Command         | What it does                                                     |
+| --------------- | ---------------------------------------------------------------- |
+| `npm run dev`   | Dev server at `localhost:5173`                                    |
+| `npm run build` | Static build to `dist/` (what CI deploys)                         |
+| `npm run bake`  | Re-sample `assets/mesh.glb` → `public/data/points.bin` (local)    |
 
-```bash
-npm run build
-```
+## Asset pipeline
 
-Output goes to `dist/`. Preview locally with `npm run preview`.
+`assets/` holds source material (volumetric mesh, reference media) and is
+git-ignored — it never ships. `scripts/bake-points.mjs` samples the mesh
+surface into a compact binary (`public/data/points.bin`, ~1.3 MB) that IS
+committed and served. Re-run `npm run bake` only when the scan changes.
+
+`scripts/shots.mjs` is a local screenshot harness (needs Chrome + dev server).
 
 ## Deploy
 
-Push to `main`. GitHub Actions builds the site and deploys to the `gh-pages` branch automatically.
-
-**First-time setup:** In the repo's **Settings → Pages**, set the source to "Deploy from a branch" and select `gh-pages` / `(root)`. The workflow uses `peaceiris/actions-gh-pages` — no extra secrets needed beyond the default `GITHUB_TOKEN`.
-
-## How to add a project
-
-Open `src/components/Work.tsx`. Find the `FEATURED_PROJECTS` array and append an entry:
-
-```ts
-{
-  title: 'Project Name',
-  description: 'One or two sentences.',
-  tags: ['Tag1', 'Tag2'],
-  // Optional — omit if no live link:
-  link: {
-    label: 'View live',
-    href: 'https://example.com',
-  },
-  // Optional — omit if no award:
-  award: 'Award Name',
-},
-```
-
-Remove one of the `// TODO` comment lines to mark the slot used.
-
-## How to add writing posts
-
-Writing is stubbed in `src/components/Writing.tsx`. To wire it up:
-
-1. Create `src/data/posts.ts`:
-
-```ts
-export interface Post {
-  slug: string
-  title: string
-  date: string   // ISO 8601
-  excerpt: string
-}
-
-export const posts: Post[] = [
-  {
-    slug: 'first-post',
-    title: 'Title',
-    date: '2025-06-01',
-    excerpt: 'One sentence.',
-  },
-]
-```
-
-2. In `Writing.tsx`, import `posts` and replace the "coming soon" paragraph with a mapped list of post cards.
-
-3. For full post pages, create `.tsx` files in `src/posts/` and add routes via `react-router-dom`.
-
-## File structure
-
-```
-src/
-  components/
-    Nav.tsx       — sticky header, theme toggle, mobile menu
-    Hero.tsx      — full-viewport intro with name and tagline
-    About.tsx     — bio paragraphs + sidebar facts
-    Work.tsx      — featured projects (edit FEATURED_PROJECTS here)
-    Writing.tsx   — stub section for future posts
-    Contact.tsx   — email, GitHub, LinkedIn links
-    Footer.tsx    — minimal footer
-  hooks/
-    useTheme.ts   — dark/light toggle with localStorage
-  App.tsx
-  index.css       — Tailwind + CSS custom properties for the color system
-public/
-  favicon.svg
-  robots.txt
-  sitemap.xml
-.github/workflows/deploy.yml
-```
+Push to `main` → `.github/workflows/deploy.yml` runs `npm ci && npm run build`
+and publishes `dist/` to GitHub Pages.
