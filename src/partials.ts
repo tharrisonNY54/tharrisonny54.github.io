@@ -10,6 +10,9 @@ const NAV = [
   { href: '/contact.html', label: 'Contact', index: '03' },
 ];
 
+/** The resume is what a recruiter forwards, so it gets its own slot in the nav. */
+const RESUME_HREF = '/resume.pdf';
+
 export function mountChrome(): void {
   const headerSlot = document.querySelector('[data-header]');
   const footerSlot = document.querySelector('[data-footer]');
@@ -20,11 +23,16 @@ export function mountChrome(): void {
       const current = path.endsWith(n.href) ? ' aria-current="page"' : '';
       return `<a href="${n.href}"${current}><span class="nav__index">${n.index}&nbsp;</span>${n.label}</a>`;
     }).join('');
+    const resume =
+      `<a class="nav__resume" href="${RESUME_HREF}" target="_blank" rel="noopener">Resume<span aria-hidden="true">&#8599;</span></a>`;
     headerSlot.outerHTML = `
-      <header class="site-header">
+      <header class="site-header at-top">
         <div class="site-header__inner">
-          <a class="wordmark" href="/">TREY HARRISON<sup>TUS</sup></a>
-          <nav class="nav" aria-label="Main navigation">${links}</nav>
+          <a class="wordmark" href="/">
+            <span class="wordmark__full">TREY HARRISON</span>
+            <span class="wordmark__short" aria-hidden="true">TH</span>
+          </a>
+          <nav class="nav" aria-label="Main navigation">${links}${resume}</nav>
         </div>
       </header>`;
   }
@@ -34,7 +42,7 @@ export function mountChrome(): void {
       <footer class="site-footer">
         <div class="wrap">
           <div class="site-footer__grid">
-            <p class="site-footer__cta">Working on something interesting?<br /><a href="mailto:treyh413@outlook.com">Write to me.</a></p>
+            <p class="site-footer__cta">Working on something interesting?<br /><a href="mailto:treyh413@outlook.com">Email me.</a></p>
             <div class="footcol">
               <h4>Navigate</h4>
               <ul>
@@ -55,8 +63,7 @@ export function mountChrome(): void {
           </div>
           <div class="site-footer__base">
             <span class="mono mono--micro">&copy; <span data-year></span> Trey Harrison &mdash; Tucson, AZ</span>
-            <span class="mono mono--micro">Built with Three.js &middot; No templates</span>
-            <span class="mono mono--micro" data-clock></span>
+            <span class="mono mono--micro">Built with Three.js</span>
           </div>
         </div>
       </footer>

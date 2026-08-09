@@ -4,17 +4,18 @@ import './styles/base.css';
 import './styles/components.css';
 import './styles/pages.css';
 
-// Self-hosted fonts (no CDN — bundled by Vite)
-import '@fontsource/space-grotesk/300.css';
+// Self-hosted fonts (no CDN — bundled by Vite).
+// Only the weights the stylesheets actually use: 400 and 500.
 import '@fontsource/space-grotesk/400.css';
 import '@fontsource/space-grotesk/500.css';
-import '@fontsource/space-grotesk/700.css';
 import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
 import '@fontsource/space-mono/400.css';
-import '@fontsource/space-mono/700.css';
 
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** Page-transition fade. Short enough that clicking through never feels stalled. */
+const NAV_FADE_MS = 160;
 
 /** Fade the load curtain out, then let `.enter` elements rise in. */
 function bootIn(): void {
@@ -48,7 +49,7 @@ function wirePageTransitions(): void {
     document.body.classList.add('is-leaving');
     window.setTimeout(() => {
       window.location.href = href;
-    }, 320);
+    }, NAV_FADE_MS);
   });
 
   // Restore on back/forward (page kept in bfcache).
@@ -83,24 +84,16 @@ function wireReveals(): void {
   items.forEach((el) => io.observe(el));
 }
 
-/** Live UTC clock in [data-clock] elements — reinforces the "instrument" feel. */
-function wireClock(): void {
-  const nodes = document.querySelectorAll<HTMLElement>('[data-clock]');
-  if (!nodes.length) return;
-  const tick = () => {
-    const t = new Date().toISOString().slice(11, 19);
-    nodes.forEach((n) => (n.textContent = `${t} UTC`));
-  };
-  tick();
-  window.setInterval(tick, 1000);
-}
 
-/** Toggle hero corner-label visibility once the user scrolls past the fold. */
-function wireHeroScroll(): void {
-  const hero = document.querySelector<HTMLElement>('.hero');
-  if (!hero) return;
+/**
+ * The header sits transparent over the hero and picks up a blurred ground once
+ * the page scrolls, so body text never collides with the nav.
+ */
+function wireHeaderScroll(): void {
+  const header = document.querySelector<HTMLElement>('.site-header');
+  if (!header) return;
   const onScroll = () => {
-    hero.classList.toggle('scrolled', window.scrollY > window.innerHeight * 0.5);
+    header.classList.toggle('at-top', window.scrollY < 24);
   };
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -116,8 +109,7 @@ export function boot(): void {
   setYear();
   wirePageTransitions();
   wireReveals();
-  wireClock();
-  wireHeroScroll();
+  wireHeaderScroll();
   if (document.readyState === 'complete') bootIn();
   else window.addEventListener('load', bootIn, { once: true });
 }

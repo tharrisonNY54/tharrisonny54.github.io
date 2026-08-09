@@ -23,6 +23,26 @@
   text-wrap: balance;
 }
 
+/* Graduation dates and what he's looking for: the first question a recruiter has. */
+.hero__avail {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+  padding-top: clamp(1.2rem, 2.5vw, 1.6rem);
+  border-top: 1px solid var(--line-2);
+  max-width: 46ch;
+}
+.hero__avail .mono {
+  text-transform: none;
+  letter-spacing: 0.01em;
+  line-height: 1.55;
+}
+.hero__avail .mono:first-child {
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+}
+
 @media (max-width: 720px) {
   .hero__rule {
     display: none;
@@ -239,6 +259,17 @@
   .work-hero__credit {
     display: none;
   }
+  /*
+   * The horizontal scrim is tuned for landscape and does almost nothing once
+   * the crop goes portrait — the headline lands on the bright Earth limb.
+   * Portrait gets a strong vertical scrim instead.
+   */
+  .work-hero__shade {
+    background:
+      linear-gradient(0deg, rgba(8, 9, 11, 0.94) 0%, rgba(8, 9, 11, 0.82) 38%,
+        rgba(8, 9, 11, 0.45) 62%, rgba(8, 9, 11, 0.1) 100%),
+      linear-gradient(180deg, rgba(8, 9, 11, 0.55) 0%, rgba(8, 9, 11, 0) 22%);
+  }
 }
 .work-hero--center .work-hero__inner {
   padding-block: calc(var(--header-h) + 1rem) clamp(4rem, 8vh, 7rem);
@@ -408,6 +439,22 @@
   }
 }
 
+/*
+ * Narrow stages can't fit the meta block and the mode toggle on one baseline —
+ * they overlap. Stack the meta above the controls instead.
+ */
+@media (max-width: 640px) {
+  .scan-stage__meta {
+    left: 1.1rem;
+    right: 1.1rem;
+    bottom: 3.4rem;
+  }
+  .scan-mode {
+    left: 1.1rem;
+    right: auto;
+  }
+}
+
 /* ============================================================
    WORK — satellite point-cloud hero
    ============================================================ */
@@ -427,9 +474,28 @@
   width: 100% !important;
   height: 100% !important;
 }
+/*
+ * The point cloud renders behind the copy. Without a scrim the individual
+ * points cross the letterforms and the lede becomes hard to read — worst at
+ * narrow widths, where the cloud sits directly under the text column.
+ */
+.sat-hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(8, 9, 11, 0.92) 0%,
+    rgba(8, 9, 11, 0.78) 34%,
+    rgba(8, 9, 11, 0.2) 56%,
+    rgba(8, 9, 11, 0) 70%
+  );
+}
+
 .sat-hero__inner {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: 100%;
   max-width: var(--maxw);
   margin-inline: auto;
@@ -463,6 +529,16 @@
 @media (max-width: 760px) {
   .sat-hero__tag {
     display: none;
+  }
+  /* Portrait puts the cloud behind the whole column, so the scrim goes vertical. */
+  .sat-hero__scrim {
+    background: linear-gradient(
+      0deg,
+      rgba(8, 9, 11, 0.9) 0%,
+      rgba(8, 9, 11, 0.86) 55%,
+      rgba(8, 9, 11, 0.5) 78%,
+      rgba(8, 9, 11, 0.15) 100%
+    );
   }
 }
 
@@ -516,7 +592,7 @@
   color: var(--ink-faint);
   padding-top: 0.6rem;
 }
-.case__titles h3 {
+.case__titles h2 {
   font-size: var(--fs-h2);
   letter-spacing: -0.02em;
 }
@@ -599,11 +675,17 @@
 }
 
 /* Two-up figure row */
+/*
+ * align-items: start matters — the columns are different widths and the images
+ * share one aspect ratio, so stretched figures would leave dead framed space
+ * under the shorter caption.
+ */
 .figrow {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
   gap: clamp(1rem, 2.5vw, 2rem);
   margin-top: clamp(1.6rem, 3vw, 2.4rem);
+  align-items: start;
 }
 .figure {
   border: 1px solid var(--line);
@@ -615,6 +697,11 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
+}
+/* Square-source diagrams keep their own ratio rather than being cropped to 4:3. */
+.figure--square img {
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
 }
 .figure figcaption {
   padding: 0.9rem 1rem;
@@ -657,11 +744,18 @@
   font-size: var(--fs-h3);
   letter-spacing: -0.01em;
 }
-.proj__title .serif {
-  display: block;
-  color: var(--ink-dim);
-  font-size: 0.8em;
-  margin-top: 0.3rem;
+/*
+ * The tagline is a sibling of the title, not a child — nesting it inside the
+ * heading merged both into one accessible name ("This sitea volumetric scan…").
+ */
+.proj__status {
+  color: var(--ink-faint);
+  margin-top: 0.5rem;
+  max-width: 34ch;
+}
+.awards__h {
+  font-size: var(--fs-h3);
+  margin-bottom: 0.8rem;
 }
 .proj__desc {
   color: var(--ink-dim);
@@ -708,6 +802,18 @@
 }
 .contact--bare .contact__grid {
   margin-top: 1.6rem;
+}
+.contact__h1 {
+  font-size: var(--fs-h1);
+  letter-spacing: -0.03em;
+  margin-top: 0.4rem;
+}
+.contact__avail {
+  margin-top: 1.4rem;
+  max-width: 56ch;
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+  color: var(--ink-dim);
 }
 .contact__big {
   font-family: var(--font-serif);

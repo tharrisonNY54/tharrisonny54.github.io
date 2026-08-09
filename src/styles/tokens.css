@@ -6,10 +6,12 @@
   --paper: #f1eee7;
   --paper-ink: #0b0c0d;
 
-  /* ---- Ink ---- */
+  /* ---- Ink ----
+     Contrast against --bg: ink 17.4:1, dim 7.1:1, faint 4.75:1.
+     --ink-faint sits just above the 4.5:1 AA floor; don't darken it further. */
   --ink: #e9e8e3;
   --ink-dim: #9b9a94;
-  --ink-faint: #64635e;
+  --ink-faint: #7d7c76;
 
   /* ---- Lines ---- */
   --line: rgba(233, 232, 227, 0.12);
@@ -32,8 +34,8 @@
   --fs-h3: clamp(1.2rem, 1rem + 0.9vw, 1.7rem);
   --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
   --fs-lead: clamp(1.15rem, 1rem + 0.7vw, 1.5rem);
-  --fs-label: 0.72rem;
-  --fs-micro: 0.66rem;
+  --fs-label: 0.78rem;
+  --fs-micro: 0.72rem;
 
   --tracking-label: 0.16em;
   --tracking-wide: 0.24em;
@@ -44,7 +46,8 @@
 
   /* ---- Space ---- */
   --gutter: clamp(1.25rem, 0.5rem + 3vw, 4rem);
-  --section: clamp(5rem, 3rem + 8vw, 12rem);
+  /* Applied to both sides of adjacent sections, so the visual gap is ~2x this. */
+  --section: clamp(3.5rem, 2.5rem + 5vw, 7rem);
   --maxw: 1560px;
 
   /* ---- Motion ---- */

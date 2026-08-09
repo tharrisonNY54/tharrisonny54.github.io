@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Projects — Trey Harrison</title>
     <meta name="description" content="Independent projects: robot voice messaging, a quantum-computing RAG chatbot, and this point-cloud portfolio." />
+    <link rel="canonical" href="https://tharrisonny54.github.io/projects.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Trey Harrison" />
+    <meta property="og:url" content="https://tharrisonny54.github.io/projects.html" />
+    <meta property="og:title" content="Projects — Trey Harrison" />
+    <meta property="og:description" content="Independent projects: robot voice messaging, a quantum-computing RAG chatbot, and this point-cloud portfolio." />
+    <meta property="og:image" content="https://tharrisonny54.github.io/img/og-card.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Trey Harrison — spacecraft geometry and volumetric capture" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#08090b" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script type="module" src="/src/pages/plain-entry.ts"></script>
@@ -18,52 +29,58 @@
         <header class="wrap page-head">
           <span class="mono page-head__index enter" style="--enter-delay: 80ms">Projects / independent</span>
           <h1 class="enter" style="--enter-delay: 180ms">
-            Things built <span class="serif">off the clock.</span>
+            Side projects, <span class="serif">most of them unfinished.</span>
           </h1>
           <p class="page-head__lead enter" style="--enter-delay: 300ms">
-            Smaller in scope than the mission work, but each one shipped and each one taught me
-            something I still use.
+            These are smaller than the work I do at the university and most are still in progress.
+            Some are proprietary, so I can show them but I cannot link the code.
           </p>
         </header>
 
         <section class="wrap section--tight" aria-label="Project list">
           <div class="proj">
-            <article class="proj__row reveal">
+            <article class="proj__row reveal" id="p01">
               <span class="proj__no">P.01</span>
-              <div>
-                <h3 class="proj__title">TEMI Robot Messaging<span class="serif">voice messages that survive a dead network</span></h3>
+              <div class="proj__head">
+                <h2 class="proj__title">TEMI Robot Messaging</h2>
+                <p class="proj__status mono">In progress</p>
               </div>
               <p class="proj__desc">
-                An end-to-end voice message delivery system for the TEMI robot. Messages route
-                through AWS SES with an offline fallback to local storage, so nothing is lost when
-                connectivity drops mid-delivery.
+                A voice message delivery system for the TEMI robot. Messages route through AWS SES
+                and fall back to local storage when the network drops, so a message in flight does
+                not get lost.
+                <!-- TODO(trey): swap in a photo or short demo clip of the robot. -->
               </p>
               <span class="proj__stack">Android &middot; Java<br />AWS SES</span>
             </article>
 
-            <article class="proj__row reveal">
+            <article class="proj__row reveal" id="p02">
               <span class="proj__no">P.02</span>
-              <div>
-                <h3 class="proj__title">Q# RAG Chatbot<span class="serif">quantum docs, answered locally</span></h3>
+              <div class="proj__head">
+                <h2 class="proj__title">Q# RAG Chatbot</h2>
+                <p class="proj__status mono">University of Arizona Innovation Award, 2025</p>
               </div>
               <p class="proj__desc">
-                A full-stack retrieval-augmented chatbot that indexes Q# documentation and injects
-                semantically-matched context into a Mistral-7B model running on llama-cpp. React
-                front end, Node back end, PostgreSQL underneath.
+                A retrieval augmented chatbot that indexes Q# documentation and feeds matching
+                context into a Mistral-7B model running on llama-cpp. React front end, Node back
+                end, PostgreSQL underneath. I built it in a VIP class and it won a University of
+                Arizona Innovation Award.
+                <!-- TODO(trey): screenshot of the chat UI answering a real Q# question. -->
               </p>
               <span class="proj__stack">React &middot; Node.js<br />Mistral-7B &middot; llama-cpp<br />PostgreSQL</span>
             </article>
 
-            <article class="proj__row reveal">
+            <article class="proj__row reveal" id="p03">
               <span class="proj__no">P.03</span>
-              <div>
-                <h3 class="proj__title">This site<span class="serif">a volumetric scan, 90,000 points, no framework</span></h3>
+              <div class="proj__head">
+                <h2 class="proj__title">This site</h2>
+                <p class="proj__status mono">Source on GitHub</p>
               </div>
               <p class="proj__desc">
                 The hero is a volumetric capture of me, sampled offline from a textured mesh into a
                 1.3&nbsp;MB binary and reassembled in a GPU shader. The satellite on the work page
                 is generated procedurally in the browser. Vite, Three.js, and hand-written CSS
-                &mdash; the source mesh never ships.
+                The source mesh never ships.
               </p>
               <span class="proj__stack">Three.js &middot; TypeScript<br />GLSL &middot; Vite</span>
             </article>
@@ -95,10 +112,16 @@
               </div>
             </div>
             <div class="case__detail">
+              <h3 class="awards__h">Awards</h3>
               <p>
-                Recognition along the way: the Honors Research &amp; Creative Inquiry Award (2025),
-                a University of Arizona Innovation Award (2025), and Dean&rsquo;s List with
-                Distinction.
+                The Honors Research and Creative Inquiry Award (2025) was a scholarship that paid
+                for me to go to Cura&ccedil;ao, where I did the lidar mapping of the Jewish
+                cemeteries, 3D scanning of artifacts at a local museum, and volumetric recordings of
+                people in the community.
+              </p>
+              <p>
+                I got a University of Arizona Innovation Award (2025) for the Q# chatbot I built in
+                a VIP class.
               </p>
             </div>
           </div>
