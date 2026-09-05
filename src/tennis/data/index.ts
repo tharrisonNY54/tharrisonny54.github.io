@@ -16,6 +16,8 @@ declare global {
   }
 }
 
+export type { SupabaseConfig };
+
 let store: SheetStore | null = null;
 
 export function getStore(): SheetStore {
@@ -25,12 +27,30 @@ export function getStore(): SheetStore {
   const url = config?.url?.trim();
   const anonKey = config?.anonKey?.trim();
 
-  store = url && anonKey ? new SupabaseSheetStore({ url, anonKey }) : new LocalSheetStore();
+  store =
+    url && anonKey
+      ? new SupabaseSheetStore({
+          url,
+          anonKey,
+          // Anything other than an explicit `true` means "do not send mail".
+          // The default has to be off: a typo in this file must never be the
+          // reason 32 people get emailed.
+          emailEnabled: config?.emailEnabled === true,
+        })
+      : new LocalSheetStore();
   return store;
 }
 
 export function isDemoMode(): boolean {
   return getStore() instanceof LocalSheetStore;
+}
+
+/**
+ * True when composed messages are being logged instead of delivered — the demo
+ * store always, and a live site whose config has not switched email on.
+ */
+export function isEmailMuted(): boolean {
+  return isDemoMode() || window.TENNIS_CONFIG?.emailEnabled !== true;
 }
 
 export * from './store.js';

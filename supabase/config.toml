@@ -1,0 +1,14 @@
+# Supabase CLI project config.
+
+project_id = "gpbneaabmyajiklaaizr"
+
+[functions.send-email]
+# The sheet authenticates callers with the `x-sheet-token` header issued by
+# tennis_login(), not with a Supabase Auth JWT. With the default verify_jwt the
+# platform would reject every call before the function ran, because the browser
+# sends a publishable key (`sb_publishable_...`) that is not a JWT.
+#
+# The function does its own authentication: it looks the token up in `sessions`,
+# checks the sheet and expiry, requires an administrator for announcements and
+# welcomes, and refuses to mail any address that is not on the sheet.
+verify_jwt = false

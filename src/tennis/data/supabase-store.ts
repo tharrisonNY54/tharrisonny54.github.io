@@ -8,11 +8,18 @@
  */
 
 import type { Member, Settings, Sheet, Signup } from '../types.js';
+import { recordOutbox } from './local-store.js';
 import { sortRoster, StoreError, type EmailMessage, type PreferenceChange, type SheetStore } from './store.js';
 
 export interface SupabaseConfig {
   url: string;
   anonKey: string;
+  /**
+   * Outbound mail is opt-in. Promotion notices are sent automatically whenever
+   * the draw changes, so a half-configured site could mail 32 people without
+   * anyone pressing a button. Leave this false until the group is ready.
+   */
+  emailEnabled: boolean;
 }
 
 interface MemberRow {
@@ -66,9 +73,12 @@ function writeToken(token: string): void {
 }
 
 export class SupabaseSheetStore implements SheetStore {
-  readonly label = 'Supabase';
-
   constructor(private readonly config: SupabaseConfig) {}
+
+  /** Muting is easy to forget, so the footer of every page says it out loud. */
+  get label(): string {
+    return this.config.emailEnabled ? 'Live' : 'Live · email off';
+  }
 
   async authenticate(sheetId: string, password: string): Promise<Member | null> {
     const rows = await this.rpc<LoginRow[]>('tennis_login', {
@@ -170,6 +180,12 @@ export class SupabaseSheetStore implements SheetStore {
    * stays server-side. The browser only ever names recipients by member id.
    */
   async sendEmail(sheetId: string, message: EmailMessage): Promise<void> {
+    if (!this.config.emailEnabled) {
+      // Log it where the maintenance page can show it, and deliver nothing.
+      recordOutbox(sheetId, message, Date.now());
+      return;
+    }
+
     const response = await fetch(`${this.baseUrl()}/functions/v1/send-email`, {
       method: 'POST',
       headers: { ...this.headers(), 'Content-Type': 'application/json' },
@@ -216,7 +232,13 @@ export class SupabaseSheetStore implements SheetStore {
     const token = readToken();
     return {
       apikey: this.config.anonKey,
-      Authorization: `Bearer ${this.config.anonKey}`,
+      // Legacy anon keys are JWTs and the gateway expects them in Authorization
+      // too. The newer `sb_publishable_...` keys are not JWTs, and sending one
+      // as a Bearer token fails JWT parsing before the request ever reaches
+      // PostgREST, so it goes in `apikey` alone.
+      ...(isJwt(this.config.anonKey)
+        ? { Authorization: `Bearer ${this.config.anonKey}` }
+        : {}),
       // Row level security reads this header; without it nothing is visible.
       ...(token ? { 'x-sheet-token': token } : {}),
     };
@@ -225,6 +247,11 @@ export class SupabaseSheetStore implements SheetStore {
   private baseUrl(): string {
     return this.config.url.replace(/\/+$/, '');
   }
+}
+
+/** Three dot-separated base64url segments starting with a `{"alg":...` header. */
+function isJwt(key: string): boolean {
+  return key.startsWith('eyJ') && key.split('.').length === 3;
 }
 
 async function describeFailure(response: Response): Promise<string> {

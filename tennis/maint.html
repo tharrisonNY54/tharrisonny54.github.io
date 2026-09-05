@@ -153,14 +153,11 @@
         </div>
       </section>
 
-      <!-- ----------------------------------------------- demo mail log -->
+      <!-- ------------------------------------------------- unsent mail -->
       <section aria-labelledby="outbox-heading" id="outbox-section" hidden>
         <hr class="rule" />
-        <h2 class="section-heading" id="outbox-heading">Demo Mail Log</h2>
-        <p style="text-align: center">
-          There is no mail server behind the demo, so messages the site would have sent are listed
-          here instead. Nothing has actually been delivered.
-        </p>
+        <h2 class="section-heading" id="outbox-heading">Mail Log</h2>
+        <p style="text-align: center" id="outbox-explainer"></p>
         <table class="data-table" id="outbox-table">
           <thead>
             <tr>
@@ -171,7 +168,7 @@
           </thead>
           <tbody id="outbox-body"></tbody>
         </table>
-        <div class="button-bar">
+        <div class="button-bar" id="reset-demo-bar" hidden>
           <button class="button" type="button" id="reset-demo">Reset Demo Data</button>
         </div>
       </section>

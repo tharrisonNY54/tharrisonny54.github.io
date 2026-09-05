@@ -209,7 +209,21 @@ alter table public.members  enable row level security;
 alter table public.signups  enable row level security;
 alter table public.sessions enable row level security;
 
--- sessions is reachable only through the security-definer functions above.
+-- Table privileges are checked BEFORE row level security, so without these
+-- grants every policy below is unreachable and the site fails with
+-- "permission denied for table members" even for a correctly signed-in member.
+-- Newer Supabase projects do not grant these automatically.
+--
+-- Granting broadly here is safe precisely because RLS is on: these say "the
+-- anonymous role may attempt these verbs", and the policies decide which rows
+-- it actually reaches — which is none at all without a valid session token.
+grant usage on schema public to anon, authenticated;
+grant select, update                 on public.sheets  to anon, authenticated;
+grant select, insert, update, delete on public.members to anon, authenticated;
+grant select, insert, update, delete on public.signups to anon, authenticated;
+
+-- sessions is reachable only through the security-definer functions above, so
+-- it gets no grant at all. This revoke must stay AFTER the grants above.
 revoke all on public.sessions from anon, authenticated;
 
 drop policy if exists sheets_read on public.sheets;
@@ -269,12 +283,17 @@ values (
 )
 on conflict (id) do nothing;
 
--- Seed the two guest rows and one administrator so somebody can sign in and
--- build the rest of the roster from the maintenance page. CHANGE THIS LOGIN.
+-- Seed the two guest rows and one placeholder administrator so somebody can
+-- sign in and build the rest of the roster from the maintenance page.
+--
+-- This file is committed to a public repository, so it deliberately contains
+-- no real names or contact details. Load the actual roster from a separate
+-- seed kept outside the repo, and make sure that seed deletes 'admin1' — until
+-- it does, CHANGE-ME-0000 is a working administrator password.
 insert into public.members
   (id, sheet_id, seat, first_name, last_name, login_id, email, member_type, is_admin, is_guest_slot)
 values
-  ('admin1', 'Doubles40', 1, 'Darel', 'Harrison', 'CHANGE-ME-0000', '', 'regular', true, false),
+  ('admin1', 'Doubles40', 1, '', 'Administrator', 'CHANGE-ME-0000', '', 'regular', true, false),
   ('guest1', 'Doubles40', 2, '', 'Guest 1', 'guest1', '', 'regular', false, true),
   ('guest2', 'Doubles40', 3, '', 'Guest 2', 'guest2', '', 'regular', false, true)
 on conflict (id) do nothing;

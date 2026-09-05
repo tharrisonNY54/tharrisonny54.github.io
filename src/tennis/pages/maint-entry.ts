@@ -1,6 +1,6 @@
 import '../styles/tennis.css';
 
-import { getStore, isDemoMode } from '../data/index.js';
+import { getStore, isDemoMode, isEmailMuted } from '../data/index.js';
 import { readOutbox } from '../data/local-store.js';
 import { announcementEmail, welcomeEmail } from '../lib/mail.js';
 import { requireSession } from '../lib/session.js';
@@ -61,8 +61,20 @@ function wire(): void {
 
   need<HTMLFormElement>('#settings-form').addEventListener('submit', onSaveSettings);
 
-  if (isDemoMode()) {
+  // The log is shown whenever mail is being recorded rather than delivered,
+  // which includes a live sheet with email switched off in config.js.
+  if (isEmailMuted()) {
     need<HTMLElement>('#outbox-section').hidden = false;
+    need<HTMLElement>('#outbox-heading').textContent = isDemoMode()
+      ? 'Demo Mail Log'
+      : 'Unsent Mail Log — email is switched off';
+    need<HTMLElement>('#outbox-explainer').textContent = isDemoMode()
+      ? 'There is no mail server behind the demo, so messages the site would have sent are listed here instead. Nothing has actually been delivered.'
+      : 'Outbound email is switched off in tennis/config.js, so messages the site would have sent are listed here instead. Nothing has been delivered to anybody.';
+  }
+
+  if (isDemoMode()) {
+    need<HTMLElement>('#reset-demo-bar').hidden = false;
     need<HTMLButtonElement>('#reset-demo').addEventListener('click', onResetDemo);
   }
 }
@@ -104,7 +116,7 @@ function renderSettings(): void {
 }
 
 function renderOutbox(): void {
-  if (!isDemoMode()) return;
+  if (!isEmailMuted()) return;
 
   const body = need<HTMLTableSectionElement>('#outbox-body');
   const entries = readOutbox(sheet.id);

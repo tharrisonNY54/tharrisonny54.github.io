@@ -1,7 +1,7 @@
 import '../styles/tennis.css';
 
 import { getStore, isDemoMode } from '../data/index.js';
-import { DEMO_ADMIN_PASSWORD, DEMO_SHEET_ID } from '../data/seed.js';
+import { DEMO_ADMIN_NAME, DEMO_ADMIN_PASSWORD, DEMO_SHEET_ID } from '../data/seed.js';
 import {
   forgetLogin,
   readRememberedLogin,
@@ -40,7 +40,7 @@ function initialise(): void {
 
   if (isDemoMode()) {
     const hint = need<HTMLParagraphElement>('#demo-hint');
-    hint.textContent = `Demo sheet — Sign Up Sheet ID "${DEMO_SHEET_ID}", password ${DEMO_ADMIN_PASSWORD} signs you in as Darel Harrison (administrator).`;
+    hint.textContent = `Demo sheet — Sign Up Sheet ID "${DEMO_SHEET_ID}", password ${DEMO_ADMIN_PASSWORD} signs you in as ${DEMO_ADMIN_NAME} (administrator). Everyone on the demo sheet is invented.`;
     hint.hidden = false;
   }
 

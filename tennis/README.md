@@ -53,47 +53,82 @@ npm run build    # production build into dist/
 and is **not** part of the build, so it can be edited on the live site without
 recompiling.
 
-- **Both values blank → demo mode.** The whole sheet lives in whoever's browser
-  is looking at it, seeded with the real roster names and invented contact
-  details. Nothing is shared between people and no email is delivered — the
-  maintenance page shows a mail log of what *would* have been sent. This is the
-  mode to show the group.
-- **Both values filled in → live.** The site reads and writes Supabase.
+- **`url` and `anonKey` blank → demo mode.** The whole sheet lives in whoever's
+  browser is looking at it. Everybody on the demo roster is **invented** — the
+  file is compiled into the public bundle, so it deliberately contains no real
+  person's name, phone number or address. It keeps the real sheet's *shape*
+  (32 members plus two guest rows, 13 substitutes, 3 administrators) so the
+  draw behaves the way the group will see.
+- **Both filled in → live.** The site reads and writes Supabase.
+
+## Where the real roster lives
+
+The published site is public and so is this repository, so the 32 members'
+phone numbers and email addresses are **only ever in the Supabase `members`
+table**, behind the login. They are not in this repo, not in `dist/`, and not
+in the JavaScript bundle. Making the repo private would not change that —
+GitHub Pages serves the built site publicly either way.
+
+Load them from a seed kept outside the repository (see "Going live" step 3),
+and delete that file once it has run.
+
+## Outbound email is off by default
+
+`emailEnabled` in `config.js` must read exactly `true` before a single message
+is delivered. This is not paranoia about a button: **promotion notices are sent
+automatically whenever the draw changes**, so a sheet pointed at a real roster
+with mail switched on can email 32 people without anyone asking it to.
+
+While it is off:
+
+- every message the site composes is recorded and listed under **Mail Log** on
+  the Website Maintenance page,
+- nothing reaches a mail provider,
+- the footer of every page reads `Live · email off`,
+- the sheet stops claiming that promoted members "were notified by email".
 
 ## Going live on Supabase
 
-1. Create a project in your Supabase org and wait for it to finish provisioning.
-2. Open the SQL editor and run `supabase/schema.sql` from the repo root. It
-   creates the tables, turns on row level security, and inserts the `Doubles40`
-   sheet with one administrator and the two guest rows.
-3. **Change the placeholder administrator login.** The seed inserts
-   `CHANGE-ME-0000` as the password for the first admin. Set it to your dad's
-   phone number before anyone else has the URL.
-4. Copy the project URL and the anon key from *Project Settings → API* into
-   `public/tennis/config.js`.
-5. For email, deploy the edge function and give it a mail provider key:
+1. Create a project and wait for it to finish provisioning.
+2. Open the SQL editor and run `supabase/schema.sql`. It creates the tables,
+   turns on row level security, and inserts the `Doubles40` sheet with a
+   placeholder administrator (`CHANGE-ME-0000`) and the two guest rows.
+3. Run the roster seed kept outside the repo. It upserts the 32 real members,
+   sets each one's password to their own phone number with the formatting
+   stripped, and **deletes the `admin1` placeholder** — until it does,
+   `CHANGE-ME-0000` is still a working administrator login. Then delete the
+   seed file.
+4. Copy the project URL and the publishable key from *Project Settings → API*
+   into `public/tennis/config.js`. Leave `emailEnabled: false`.
+5. Sign in and check the roster, the play days and the announcement. Nothing
+   sends mail at this stage, so this is the safe time to get it wrong.
+6. Only when that all looks right, set up email:
 
    ```bash
    supabase functions deploy send-email
    supabase secrets set RESEND_API_KEY=... MAIL_FROM="MWF Group <sheet@yourdomain>"
    ```
 
-   Until that is deployed, everything except outgoing email works; email calls
-   fail and are reported, never silently swallowed.
-6. Sign in as the administrator and build the roster from the maintenance page,
-   using **Send Welcome** to give each member their details.
+   `supabase/config.toml` sets `verify_jwt = false` for that function, which is
+   required: callers authenticate with the sheet's own session token, not a
+   Supabase Auth JWT.
+
+7. Set `emailEnabled: true`, then use **Send Welcome** on your own row first and
+   confirm it arrives before touching anybody else's.
 
 ### What the security model does and does not do
 
-The anon key is public, so nothing is protected by "only our site calls this".
-Instead `tennis_login()` checks the sheet ID and password and returns a random
-session token; the browser sends it as an `x-sheet-token` header, and every row
-level security policy checks it. Members can only write their own sign-ups.
-Only administrators can change members or settings.
+The publishable key is public, so nothing is protected by "only our site calls
+this". Instead `tennis_login()` checks the sheet ID and password and returns a
+random session token; the browser sends it as an `x-sheet-token` header, and
+every row level security policy checks it. Members can only write their own
+sign-ups. Only administrators can change members or settings.
 
 The one real weakness is inherited from the original design: **passwords are
 stored in the clear**, because the site emails a member their password and
 shows it on the maintenance page. Any signed-in member can therefore read
-another member's password, and the password is a phone number. That is
-acceptable for a sheet that holds nothing but tennis availability. If it ever
-holds anything more, move to Supabase Auth magic links.
+another member's password — and since the password is that member's phone
+number, the real trust boundary here is "signed-in member", not
+"administrator". That is acceptable for a sheet that holds nothing but tennis
+availability and a roster the group already circulates. If it ever holds
+anything more, move to Supabase Auth magic links.

@@ -1,9 +1,14 @@
 /**
  * Demo roster and sign-ups.
  *
- * The names, member classes and row order mirror the group's real sheet so it
- * is recognisable at a glance, but every phone number, email address and login
- * ID here is invented. Nothing in this file is real contact information.
+ * NOTHING IN THIS FILE DESCRIBES A REAL PERSON. Every name, phone number,
+ * email address and login ID is invented, because this module is compiled into
+ * the public bundle and served to anyone who opens the site.
+ *
+ * What *is* copied from the real sheet is its shape — 32 members plus two guest
+ * rows, 13 substitutes, 3 administrators — so the demo exercises the same draw
+ * behaviour the group will see. The real roster lives only in Supabase, behind
+ * the login.
  */
 
 import type { Member, Settings, Sheet, Signup } from '../types.js';
@@ -13,6 +18,10 @@ export const DEMO_SHEET_ID = 'Doubles40';
 
 /** Handed out on the login screen so the demo is walk-up usable. */
 export const DEMO_ADMIN_PASSWORD = '5205551010';
+
+/** Whose row that password opens, named on the login screen's demo hint. */
+export const DEMO_ADMIN_LAST_NAME = 'Calder';
+export const DEMO_ADMIN_NAME = 'Nadia Calder';
 
 export const DEFAULT_SETTINGS: Settings = {
   title: 'MWF GROUP',
@@ -33,45 +42,46 @@ type RosterEntry = [last: string, first: string, kind: 'regular' | 'substitute' 
 
 /** Alphabetical by last name, exactly as the sheet numbers the rows. */
 const ROSTER: RosterEntry[] = [
-  ['Ball', 'Tom', 'regular'],
-  ['Bennett', 'Bruce', 'substitute'],
-  ['Conour', 'Joe', 'substitute'],
-  ['El Sharif', 'Salah', 'admin'],
-  ['Erickson', 'Mike', 'substitute'],
-  ['Estupinan', 'Marco', 'substitute'],
-  ['Flint', 'Jim', 'regular'],
-  ['Haberbush', 'John', 'regular'],
-  ['Hansen', 'Hans', 'regular'],
-  ['Harrison', 'Darel', 'admin'],
-  ['Hyde', 'C.R.', 'substitute'],
-  ['Ives', 'Debbie', 'substitute'],
-  ['Khan', 'Atif', 'regular'],
-  ['Kokke', 'Henri', 'regular'],
-  ['Larson', 'Lance', 'substitute'],
-  ['Lawlor', 'Ken', 'regular'],
-  ['Levine', 'Irv', 'substitute'],
-  ['Mack', 'Jeff', 'admin'],
-  ['Makansi', 'Jason', 'regular'],
-  ['Martin', 'Jonathan', 'regular'],
-  ['McCleary', 'Shawn', 'substitute'],
-  ['Mckinnon', 'George', 'regular'],
-  ['Overlund', 'Scott', 'regular'],
-  ['Peterson', 'Mark', 'regular'],
-  ['Pettit', 'Jan', 'substitute'],
-  ['Richied', 'Chris', 'regular'],
-  ['Rosenfeld', 'Chip', 'substitute'],
-  ['Sommers', 'Adam', 'regular'],
-  ['Sorensen', 'Keld', 'regular'],
-  ['Stuart', 'Ian', 'regular'],
-  ['Walsh', 'Tom', 'substitute'],
-  ['Wilcox', 'Paul', 'substitute'],
+  ['Abbott', 'Rita', 'regular'],
+  ['Alvarez', 'Dale', 'substitute'],
+  ['Bishop', 'Ruth', 'substitute'],
+  ['Bramley', 'Otto', 'regular'],
+  ['Calder', 'Nadia', 'admin'],
+  ['Castellano', 'Vince', 'substitute'],
+  ['Dunmore', 'Omar', 'substitute'],
+  ['Ellery', 'Paul', 'regular'],
+  ['Fairweather', 'June', 'regular'],
+  ['Fontaine', 'Wendy', 'regular'],
+  ['Garrick', 'Ken', 'regular'],
+  ['Hollis', 'Ray', 'admin'],
+  ['Ibarra', 'Ada', 'substitute'],
+  ['Jessup', 'Grace', 'substitute'],
+  ['Kirkwood', 'Sam', 'regular'],
+  ['Lomax', 'Leif', 'regular'],
+  ['Marchetti', 'Bea', 'substitute'],
+  ['Merrill', 'Doug', 'regular'],
+  ['Nyberg', 'Hal', 'regular'],
+  ['Ortiz', 'Dora', 'substitute'],
+  ['Pruitt', 'Joan', 'admin'],
+  ['Quill', 'Ned', 'regular'],
+  ['Ramsey', 'Alice', 'regular'],
+  ['Rowan', 'Pearl', 'substitute'],
+  ['Sackville', 'Gus', 'substitute'],
+  ['Thorne', 'Mabel', 'regular'],
+  ['Tolliver', 'Frank', 'regular'],
+  ['Underhill', 'Tim', 'regular'],
+  ['Vance', 'Bram', 'substitute'],
+  ['Whitlock', 'Iris', 'regular'],
+  ['Yeats', 'Cliff', 'substitute'],
+  ['Zeller', 'Nora', 'substitute'],
 ];
 
 export function buildSeedMembers(): Member[] {
   const members: Member[] = ROSTER.map(([last, first, kind], position) => {
     const seat = position + 1;
-    // Darel Harrison is the account the demo instructions hand out.
-    const loginId = last === 'Harrison' ? DEMO_ADMIN_PASSWORD : `52055${String(51000 + seat)}`;
+    // One administrator's password is fixed, because the login screen hands it
+    // out so the demo is walk-up usable.
+    const loginId = last === DEMO_ADMIN_LAST_NAME ? DEMO_ADMIN_PASSWORD : `52055${String(51000 + seat)}`;
 
     return {
       id: `m${String(seat).padStart(2, '0')}`,

@@ -126,10 +126,7 @@ export class LocalSheetStore implements SheetStore {
    * nothing pretends to have been delivered.
    */
   async sendEmail(sheetId: string, message: EmailMessage): Promise<void> {
-    const storageKey = OUTBOX_PREFIX + normalizeId(sheetId);
-    const outbox = readJson<OutboxEntry[]>(storageKey) ?? [];
-    const entry: OutboxEntry = { ...message, sentAt: this.now().getTime() };
-    writeJson(storageKey, [entry, ...outbox].slice(0, OUTBOX_LIMIT));
+    recordOutbox(sheetId, message, this.now().getTime());
   }
 
   async resetDemoData(sheetId: string): Promise<Sheet> {
@@ -149,6 +146,18 @@ export class LocalSheetStore implements SheetStore {
 
 export function readOutbox(sheetId: string): OutboxEntry[] {
   return readJson<OutboxEntry[]>(OUTBOX_PREFIX + normalizeId(sheetId)) ?? [];
+}
+
+/**
+ * Records a message that was composed but not handed to a mail provider —
+ * either because there is no provider behind the demo, or because outbound
+ * mail is switched off in config.js. Shared with the Supabase store so a muted
+ * live site keeps the same visible log.
+ */
+export function recordOutbox(sheetId: string, message: EmailMessage, sentAt: number): void {
+  const storageKey = OUTBOX_PREFIX + normalizeId(sheetId);
+  const outbox = readJson<OutboxEntry[]>(storageKey) ?? [];
+  writeJson(storageKey, [{ ...message, sentAt }, ...outbox].slice(0, OUTBOX_LIMIT));
 }
 
 function key(memberId: string, date: string): string {

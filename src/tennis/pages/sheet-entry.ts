@@ -1,6 +1,6 @@
 import '../styles/tennis.css';
 
-import { getStore, type PreferenceChange } from '../data/index.js';
+import { getStore, isEmailMuted, type PreferenceChange } from '../data/index.js';
 import { promotionEmail } from '../lib/mail.js';
 import { findPromotions } from '../lib/promotions.js';
 import { buildSheetView, indexSignups, preferenceFor, type SheetView } from '../lib/sheet.js';
@@ -177,7 +177,9 @@ function summarise(changeCount: number, promoted: number): string {
   const changeText = changeCount === 1 ? '1 day updated' : `${changeCount} days updated`;
   if (promoted === 0) return `${changeText}. The draw has been recalculated.`;
   const who = promoted === 1 ? '1 member was' : `${promoted} members were`;
-  return `${changeText}. ${who} moved up to playing and notified by email.`;
+  // Never claim a notification went out when mail is switched off.
+  const how = isEmailMuted() ? 'moved up to playing.' : 'moved up to playing and notified by email.';
+  return `${changeText}. ${who} ${how}`;
 }
 
 /**
