@@ -1,0 +1,644 @@
+/*
+ * Refined original.
+ *
+ * The 2007 sheet's layout, colour coding and vocabulary are preserved exactly —
+ * cream paper, blue serif title, red announcement, green/yellow/grey cells —
+ * because the group reads this page by colour and position, not by label.
+ * What changed is everything that makes it easier on older eyes: real type,
+ * higher contrast, larger hit targets, visible focus, and sticky headers so the
+ * name column and dates stay put on a twenty-column grid.
+ */
+
+:root {
+  --paper: #fdfbe8;
+  --paper-raised: #fffef4;
+  --rule: #cfc9a6;
+  --rule-strong: #a8a077;
+
+  --ink: #1b1a15;
+  --ink-soft: #55513f;
+
+  --title: #1526c8;
+  --name-regular: #16150f;
+  --name-substitute: #1668c2;
+  --name-admin: #b3261e;
+  --announce: #c1271d;
+
+  --status-open: #dcdad2;
+  --status-none: #83817a;
+  --status-none-ink: #ffffff;
+  --status-available: #ffe81c;
+  --status-available-ink: #33300a;
+  --status-playing: #2a8f3c;
+  --status-playing-ink: #ffffff;
+  --status-playing-sub: #63bd70;
+  --status-playing-sub-ink: #10300f;
+
+  --header-band: #a9d6f4;
+  --header-band-edge: #7bb4d8;
+  --row-band: #d8e9f6;
+  --row-hover: #f3eecd;
+  --seat-face: #f6cfa4;
+  --seat-marked: #37d4e8;
+
+  --button-face: #f4cda4;
+  --button-face-hover: #f8dcbd;
+  --button-edge: #b98850;
+  --focus: #1526c8;
+
+  --font-title: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+
+  --cell-width: 3.4rem;
+  --cell-height: 1.65rem;
+  --name-width: 15rem;
+
+  --space-block: clamp(1.25rem, 0.9rem + 1vw, 2rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body.tennis {
+  margin: 0;
+  padding: 0 0 3rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ---------------------------------------------------------------- headings */
+
+.sheet-title {
+  margin: 0;
+  padding: 1.1rem 1rem 0.35rem;
+  font-family: var(--font-title);
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--title);
+  text-align: center;
+}
+
+.sheet-subtitle {
+  margin: 0;
+  padding-bottom: 0.6rem;
+  font-family: var(--font-title);
+  font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2.1rem);
+  font-weight: 700;
+  color: var(--title);
+  text-align: center;
+}
+
+.section-heading {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-title);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--announce);
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* ----------------------------------------------------------- announcement */
+
+.announcement {
+  margin: 0 auto 0.5rem;
+  padding: 0 1rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--announce);
+  text-align: center;
+}
+
+/*
+ * The original used <blink>. This is the same signal without the seizure risk,
+ * and it stops entirely for anyone who asked for reduced motion.
+ */
+.announcement[data-blink='true'] {
+  animation: announce-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes announce-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .announcement[data-blink='true'] {
+    animation: none;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+}
+
+/* ------------------------------------------------------------------ layout */
+
+.sheet-scroll {
+  overflow-x: auto;
+  padding: 0 1rem;
+}
+
+.page-narrow {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.rule {
+  height: 1px;
+  margin: var(--space-block) 0;
+  background: var(--rule-strong);
+  border: 0;
+}
+
+/* ------------------------------------------------------------- the sheet */
+
+.sheet {
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0 auto;
+  font-size: 0.86rem;
+}
+
+.sheet th,
+.sheet td {
+  padding: 0;
+  font-weight: 400;
+}
+
+/* The blank spacer column that separates one week from the next. */
+.week-gap {
+  width: 0.85rem;
+  min-width: 0.85rem;
+  background: transparent;
+}
+
+.sheet thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--paper);
+}
+
+.sheet thead tr:nth-child(2) th {
+  top: var(--cell-height);
+}
+
+.date-head,
+.day-head {
+  width: var(--cell-width);
+  min-width: var(--cell-width);
+  height: var(--cell-height);
+  background: var(--header-band);
+  border: 1px solid var(--header-band-edge);
+  color: #0d2c44;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.day-head .game-count {
+  font-weight: 700;
+}
+
+.day-head[data-games='0'] .game-count {
+  color: #4a6b80;
+  font-weight: 500;
+}
+
+.members-head {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  width: var(--name-width);
+  min-width: var(--name-width);
+  padding-left: 2.6rem;
+  background: var(--paper);
+  text-align: left;
+}
+
+.members-head a {
+  color: var(--title);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* --------------------------------------------------------------- name cell */
+
+.seat-cell {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  width: 2.4rem;
+  min-width: 2.4rem;
+  background: var(--paper);
+  text-align: center;
+}
+
+.name-cell {
+  position: sticky;
+  left: 2.4rem;
+  z-index: 2;
+  width: var(--name-width);
+  min-width: var(--name-width);
+  height: var(--cell-height);
+  padding: 0 0.5rem;
+  background: var(--paper);
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.member-row:hover .name-cell,
+.member-row:hover .seat-cell {
+  background: var(--row-hover);
+}
+
+.member-row[data-editing='true'] .name-cell,
+.member-row[data-editing='true'] .seat-cell {
+  background: var(--row-band);
+}
+
+.name-cell[data-kind='regular'] {
+  color: var(--name-regular);
+}
+
+.name-cell[data-kind='substitute'] {
+  color: var(--name-substitute);
+}
+
+.name-cell[data-kind='admin'] {
+  color: var(--name-admin);
+}
+
+/* Seat buttons double as "edit this member" for administrators. */
+.seat {
+  width: 1.85rem;
+  height: 1.35rem;
+  padding: 0;
+  background: var(--seat-face);
+  border: 1px solid var(--button-edge);
+  border-radius: 3px;
+  color: #3a2410;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.seat[disabled] {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.seat:not([disabled]):hover {
+  background: #fbe0c4;
+}
+
+/* "The numbered button colored blue indicates the last player to sign up." */
+.seat[data-last-signup='true'] {
+  background: var(--seat-marked);
+  border-color: #1a8fa0;
+  color: #06323a;
+}
+
+/* ------------------------------------------------------------ status cells */
+
+.status {
+  width: var(--cell-width);
+  min-width: var(--cell-width);
+  height: var(--cell-height);
+  border: 1px solid var(--rule);
+  background: var(--status-open);
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.status[data-status='N'] {
+  background: var(--status-none);
+  color: var(--status-none-ink);
+}
+
+.status[data-status='A'] {
+  background: var(--status-available);
+  color: var(--status-available-ink);
+}
+
+.status[data-status='P'] {
+  background: var(--status-playing);
+  color: var(--status-playing-ink);
+}
+
+.status[data-status='P'][data-kind='substitute'] {
+  background: var(--status-playing-sub);
+  color: var(--status-playing-sub-ink);
+}
+
+/* ------------------------------------------------------------- edit row */
+
+.edit-row td {
+  height: 2.15rem;
+  background: var(--paper);
+}
+
+.edit-row .name-cell {
+  background: var(--row-band);
+  color: var(--ink);
+}
+
+.edit-select {
+  width: calc(var(--cell-width) - 0.35rem);
+  height: 1.75rem;
+  padding: 0 0.15rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+
+.edit-select[data-changed='true'] {
+  border-color: var(--announce);
+  box-shadow: inset 0 0 0 1px var(--announce);
+}
+
+.edit-select[disabled] {
+  background: #eeead7;
+  color: var(--ink-soft);
+  cursor: not-allowed;
+}
+
+/* -------------------------------------------------------------- controls */
+
+.button-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 1rem auto 0;
+}
+
+.button {
+  min-height: 2.1rem;
+  padding: 0.25rem 0.85rem;
+  background: var(--button-face);
+  border: 1px solid var(--button-edge);
+  border-radius: 4px;
+  color: #35210c;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--button-face-hover);
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.button--primary {
+  background: #2a8f3c;
+  border-color: #1d6b2b;
+  color: #ffffff;
+}
+
+.button--primary:hover {
+  background: #34a548;
+}
+
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ forms */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: minmax(7rem, auto) minmax(0, 1fr);
+  gap: 0.55rem 0.9rem;
+  align-items: center;
+  max-width: 34rem;
+  margin: 0 auto;
+}
+
+.form-grid > label {
+  font-weight: 600;
+  text-align: right;
+}
+
+.field {
+  width: 100%;
+  min-height: 2.15rem;
+  padding: 0.3rem 0.5rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+}
+
+.choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.choice {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  font-weight: 500;
+}
+
+.choice input {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+/* ------------------------------------------------------------------ login */
+
+.login-card {
+  max-width: 24rem;
+  margin: 1.5rem auto 0;
+  padding: 1.5rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: 8px;
+  box-shadow: 0 1px 0 var(--rule), 0 12px 28px -22px rgb(60 50 20 / 55%);
+  text-align: center;
+}
+
+.login-card label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.login-card .field {
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.05rem;
+}
+
+/* ----------------------------------------------------------------- tables */
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.4rem 0.55rem;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+}
+
+.data-table thead th {
+  background: var(--header-band);
+  border-bottom: 1px solid var(--header-band-edge);
+  color: #0d2c44;
+  font-weight: 700;
+}
+
+.data-table tbody tr:hover {
+  background: var(--row-hover);
+}
+
+/* ----------------------------------------------------------------- legend */
+
+.legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.4rem 1.25rem;
+  margin: 1rem auto;
+  padding: 0;
+  list-style: none;
+}
+
+.legend li {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.swatch {
+  display: inline-grid;
+  place-items: center;
+  width: 2.4rem;
+  min-width: 2.4rem;
+  height: 1.5rem;
+  border: 1px solid var(--rule);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------- messages */
+
+.notice {
+  max-width: 40rem;
+  margin: 0.85rem auto;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--rule-strong);
+  border-left: 5px solid var(--rule-strong);
+  border-radius: 4px;
+  background: var(--paper-raised);
+  font-weight: 600;
+  text-align: center;
+}
+
+.notice[data-tone='error'] {
+  border-color: var(--announce);
+  background: #fdeceb;
+  color: #7d1a13;
+}
+
+.notice[data-tone='success'] {
+  border-color: #1d6b2b;
+  background: #e8f6ea;
+  color: #14501f;
+}
+
+.notice[hidden] {
+  display: none;
+}
+
+.footer {
+  margin-top: 2rem;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.footer strong {
+  color: var(--ink);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.prose {
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.prose h2 {
+  margin: 1.6rem 0 0.5rem;
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  color: var(--title);
+}
+
+.prose ul {
+  padding-left: 1.2rem;
+}
+
+.prose li {
+  margin-bottom: 0.35rem;
+}

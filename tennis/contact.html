@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contact Information</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/tennis/config.js"></script>
+  </head>
+  <body class="tennis">
+    <h1 class="sheet-title" id="group-title">Contact Information</h1>
+    <p class="sheet-subtitle">Contact Information</p>
+
+    <p class="notice" id="contact-notice" hidden role="status"></p>
+
+    <main class="sheet-scroll">
+      <table class="data-table" id="contact-table">
+        <thead>
+          <tr>
+            <th scope="col"><span class="visually-hidden">Select</span></th>
+            <th scope="col">#</th>
+            <th scope="col">Member</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Mobile</th>
+            <th scope="col">Email</th>
+          </tr>
+        </thead>
+        <tbody id="contact-body"></tbody>
+      </table>
+    </main>
+
+    <div class="button-bar">
+      <button class="button" type="button" id="email-all">Email All Members</button>
+      <button class="button" type="button" id="email-selected">Email Selected</button>
+      <button class="button" type="button" id="email-playing">Email Everyone Playing</button>
+      <button class="button" type="button" id="email-available">Email the Available</button>
+    </div>
+
+    <p class="footer" id="next-day-note"></p>
+
+    <div class="button-bar">
+      <a class="button" href="./sheet.html">&lt;= Back</a>
+      <a class="button" href="./help.html">Help</a>
+    </div>
+
+    <script type="module" src="../src/tennis/pages/contact-entry.ts"></script>
+  </body>
+</html>

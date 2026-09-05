@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign Up Sheet</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/tennis/config.js"></script>
+  </head>
+  <body class="tennis">
+    <h1 class="sheet-title" id="group-title">Sign Up Sheet</h1>
+
+    <p class="announcement" id="announcement" data-blink="false"></p>
+
+    <p class="notice" id="sheet-notice" hidden role="status"></p>
+
+    <main class="sheet-scroll">
+      <table class="sheet" id="sheet-table">
+        <caption class="visually-hidden">
+          Sign up status for each member on each upcoming day of play. Green P means playing,
+          yellow A means available and waiting for a game to fill, grey N means not available,
+          and a blank cell means no preference entered.
+        </caption>
+        <thead id="sheet-head"></thead>
+        <tbody id="sheet-body"></tbody>
+        <tfoot id="sheet-foot"></tfoot>
+      </table>
+    </main>
+
+    <div class="button-bar">
+      <button class="button button--primary" type="button" id="submit-changes">Submit Changes</button>
+      <button class="button" type="button" id="reset-changes">Reset</button>
+    </div>
+
+    <div class="button-bar">
+      <button class="button" type="button" id="logout">Logout</button>
+      <a class="button" href="./help.html">Help</a>
+      <a class="button" href="./contact.html">Contact Information</a>
+      <a class="button" href="./maint.html" id="maint-link" hidden>Website Maint</a>
+    </div>
+
+    <section class="page-narrow">
+      <hr class="rule" />
+      <h2 class="section-heading">What the colors mean</h2>
+      <ul class="legend">
+        <li><span class="swatch" style="background: var(--status-open)"></span> Open — no preference entered</li>
+        <li>
+          <span class="swatch" style="background: var(--status-none); color: #fff">N</span> Not
+          available
+        </li>
+        <li>
+          <span class="swatch" style="background: var(--status-available)">A</span> Available —
+          waiting for a game to fill
+        </li>
+        <li>
+          <span class="swatch" style="background: var(--status-playing); color: #fff">P</span>
+          Playing — regular member
+        </li>
+        <li>
+          <span class="swatch" style="background: var(--status-playing-sub)">P</span> Playing —
+          substitute
+        </li>
+        <li>
+          <span class="swatch" style="background: var(--seat-marked)">7</span> Last member to sign
+          up for the next day
+        </li>
+      </ul>
+      <p style="text-align: center">
+        <span style="color: var(--name-regular); font-weight: 700">Regular member</span> &nbsp;
+        <span style="color: var(--name-substitute); font-weight: 700">Substitute member</span>
+        &nbsp;
+        <span style="color: var(--name-admin); font-weight: 700">Website administrator</span>
+      </p>
+    </section>
+
+    <p class="footer">
+      Signed in as <strong id="signed-in-as">—</strong> · <span id="store-label"></span>
+    </p>
+
+    <script type="module" src="../src/tennis/pages/sheet-entry.ts"></script>
+  </body>
+</html>

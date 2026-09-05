@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Help</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../src/tennis/styles/tennis.css" />
+  </head>
+  <body class="tennis">
+    <h1 class="sheet-title">Help</h1>
+
+    <main class="page-narrow prose">
+      <p>
+        This website is how our group signs up to play. The main page is a table: the days of play
+        run across the top, and the members run down the left side. Your row shows what you have
+        signed up for; a column shows who is playing on that day.
+      </p>
+
+      <h2>The colors in the table</h2>
+      <ul class="legend">
+        <li>
+          <span class="swatch" style="background: var(--status-open)"></span>
+          <span><strong>Blank</strong> — you have not said anything yet.</span>
+        </li>
+        <li>
+          <span class="swatch" style="background: var(--status-none); color: #fff">N</span>
+          <span><strong>Not available</strong> — you cannot play that day.</span>
+        </li>
+        <li>
+          <span class="swatch" style="background: var(--status-available)">A</span>
+          <span>
+            <strong>Available</strong> — you signed up, but there are not yet enough members to make
+            a game.
+          </span>
+        </li>
+        <li>
+          <span class="swatch" style="background: var(--status-playing); color: #fff">P</span>
+          <span><strong>Playing</strong> — you are in a game that day.</span>
+        </li>
+      </ul>
+
+      <h2>How to sign up</h2>
+      <p>
+        The last row of the page is where you make changes. It has one small box for each day. Click
+        the arrow on a day's box and choose one of three things:
+      </p>
+      <ul>
+        <li><strong>A</strong> — I am available and I want to play.</li>
+        <li><strong>N</strong> — I cannot play that day.</li>
+        <li><strong>O</strong> — I have not decided yet.</li>
+      </ul>
+      <p>
+        Change as many days as you like, then click <strong>Submit Changes</strong>. If you change
+        your mind before submitting, click <strong>Reset</strong> and your changes are undone.
+      </p>
+
+      <h2>How the draw works</h2>
+      <p>
+        A game needs four players. When you submit, the site recalculates the whole sheet. Everyone
+        who is available is put in order — regular members first, then substitutes, and within each
+        group, whoever signed up earliest comes first.
+      </p>
+      <p>
+        Players are then placed into complete games of four. If five people are available, four turn
+        green and play, and the fifth stays yellow and waits. That is why your <strong>A</strong>
+        can turn into a <strong>P</strong> without you doing anything — somebody else signed up and
+        filled the game. If somebody drops out, the person who signed up last loses the spot and
+        goes back to yellow.
+      </p>
+      <p>
+        The number next to the day at the top of each column is how many games are set for that day.
+        If your status changes to Playing, the site will email you.
+      </p>
+
+      <h2>The names and the numbers</h2>
+      <ul>
+        <li><span style="color: var(--name-regular); font-weight: 700">Black names</span> are regular members.</li>
+        <li><span style="color: var(--name-substitute); font-weight: 700">Blue names</span> are substitutes.</li>
+        <li><span style="color: var(--name-admin); font-weight: 700">Red names</span> are website administrators.</li>
+      </ul>
+      <p>
+        The numbered button to the left of each name is that member's row number. The button shown
+        in bright blue marks the last person who signed up for the next day of play, so you can see
+        at a glance whether anything has moved since you last looked.
+      </p>
+      <p>
+        The two <strong>Guest</strong> rows at the bottom are for signing up someone from outside
+        the group when there are not enough members to fill a game.
+      </p>
+
+      <h2>Contact Information</h2>
+      <p>
+        The <strong>Contact Information</strong> button opens a page listing every member with their
+        phone numbers and email address. Click an address to write to that person, or use the
+        buttons at the bottom to email the whole group, just the people playing, just the people
+        waiting, or only the members you tick.
+      </p>
+
+      <h2>Signing in and out</h2>
+      <p>
+        You sign in with the <strong>Sign Up Sheet ID</strong> and your own
+        <strong>User Password</strong>. Tick <strong>Remember this login</strong> and this computer
+        will fill them in for you for a week.
+      </p>
+      <p>
+        You stay signed in until you close your browser. If you share a computer, click
+        <strong>Logout</strong> when you are finished so nobody else can change your sign ups.
+      </p>
+      <p>
+        Your password is your phone number. If you cannot get in, ask one of the administrators
+        (the red names) and they will send your sign in details to you again.
+      </p>
+
+      <h2>For administrators</h2>
+      <p>
+        Administrators see an extra <strong>Website Maint</strong> button. It changes the red
+        announcement at the top of the sheet, adds, edits and removes members, sends a member their
+        welcome message, and adjusts the settings — how many days show, how many players make a
+        game, how many games can run at once, and how guests are treated in the draw.
+      </p>
+      <p>
+        Administrators can also edit anybody's row: click the numbered button next to a member's
+        name and the bottom row switches to that member.
+      </p>
+    </main>
+
+    <div class="button-bar">
+      <a class="button" href="./sheet.html">&lt;= Back</a>
+    </div>
+  </body>
+</html>

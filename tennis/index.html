@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign Up Sheet Login</title>
+    <meta name="description" content="Sign in to the tennis group sign up sheet." />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/tennis/config.js"></script>
+  </head>
+  <body class="tennis">
+    <main class="page-narrow">
+      <h1 class="sheet-title">Sign Up Sheet Login</h1>
+
+      <p class="notice" data-tone="error" id="login-error" hidden role="alert"></p>
+
+      <form class="login-card" id="login-form" novalidate>
+        <label for="sheet-id">Sign Up Sheet ID</label>
+        <input
+          class="field"
+          id="sheet-id"
+          name="sheetId"
+          type="text"
+          autocomplete="organization"
+          autocapitalize="none"
+          spellcheck="false"
+          required
+        />
+
+        <label for="password">User Password</label>
+        <input
+          class="field"
+          id="password"
+          name="password"
+          type="password"
+          inputmode="numeric"
+          autocomplete="current-password"
+          required
+        />
+
+        <p class="choice-row" style="justify-content: center">
+          <label class="choice">
+            <input type="checkbox" id="remember" name="remember" />
+            Remember this login
+          </label>
+        </p>
+
+        <div class="button-bar">
+          <button class="button button--primary" type="submit" id="login-button">Login</button>
+        </div>
+      </form>
+
+      <p class="footer">
+        Your password is your phone number. If you cannot get in, ask an administrator to send you
+        your details again.
+      </p>
+
+      <p class="footer" id="demo-hint" hidden></p>
+      <p class="footer">Tennis group sign up sheet</p>
+    </main>
+
+    <script type="module" src="../src/tennis/pages/login-entry.ts"></script>
+  </body>
+</html>

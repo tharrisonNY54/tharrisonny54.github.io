@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Website Maintenance</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/tennis/config.js"></script>
+  </head>
+  <body class="tennis">
+    <h1 class="sheet-title" id="group-title">Website Maintenance</h1>
+    <p class="sheet-subtitle">Website Maintenance</p>
+
+    <p class="notice" id="maint-notice" hidden role="status"></p>
+
+    <div class="page-narrow">
+      <hr class="rule" />
+
+      <!-- ------------------------------------------------ announcement -->
+      <section aria-labelledby="announcement-heading">
+        <h2 class="section-heading" id="announcement-heading">Announcement</h2>
+        <form class="form-grid" id="announcement-form" novalidate>
+          <label for="announcement-text">Announcement:</label>
+          <input class="field" id="announcement-text" name="announcement" type="text" maxlength="120" />
+          <span></span>
+          <label class="choice">
+            <input type="checkbox" id="announcement-blink" />
+            Blink the Announcement
+          </label>
+        </form>
+        <div class="button-bar">
+          <button class="button" type="submit" form="announcement-form">Change Announcement</button>
+          <button class="button" type="button" id="email-announcement">Email It To Everyone</button>
+        </div>
+      </section>
+
+      <hr class="rule" />
+
+      <!-- ---------------------------------------- member list maintenance -->
+      <section aria-labelledby="members-heading">
+        <h2 class="section-heading" id="members-heading">Member List Maintenance</h2>
+
+        <p style="text-align: center">
+          <label for="member-picker" class="visually-hidden">Select a Member</label>
+          <select class="field" id="member-picker" style="max-width: 18rem; display: inline-block">
+            <option value="">Select a Member</option>
+          </select>
+        </p>
+
+        <div class="button-bar">
+          <button class="button" type="button" id="member-edit">Edit</button>
+          <button class="button" type="button" id="member-delete">Delete</button>
+          <button class="button" type="button" id="member-welcome">Send Welcome</button>
+        </div>
+
+        <form class="form-grid" id="member-form" novalidate style="margin-top: 1.25rem">
+          <label for="first-name">First Name:</label>
+          <input class="field" id="first-name" name="firstName" type="text" autocomplete="off" />
+
+          <label for="last-name">Last Name:</label>
+          <input class="field" id="last-name" name="lastName" type="text" autocomplete="off" />
+
+          <label for="login-id">Login ID:</label>
+          <input class="field" id="login-id" name="loginId" type="text" inputmode="numeric" autocomplete="off" />
+
+          <label for="member-email">Email Addr:</label>
+          <input class="field" id="member-email" name="email" type="email" autocomplete="off" />
+
+          <label for="member-phone">Phone:</label>
+          <input class="field" id="member-phone" name="phone" type="tel" autocomplete="off" />
+
+          <label for="member-mobile">Mobile:</label>
+          <input class="field" id="member-mobile" name="mobile" type="tel" autocomplete="off" />
+
+          <span id="type-label" style="font-weight: 600; text-align: right">Type of Player:</span>
+          <div class="choice-row" role="radiogroup" aria-labelledby="type-label">
+            <label class="choice">
+              <input type="radio" name="memberType" value="regular" checked />
+              Regular
+            </label>
+            <label class="choice">
+              <input type="radio" name="memberType" value="substitute" />
+              Substitute
+            </label>
+          </div>
+
+          <span></span>
+          <label class="choice">
+            <input type="checkbox" id="member-admin" />
+            Assoc Administrator
+          </label>
+        </form>
+
+        <div class="button-bar">
+          <button class="button button--primary" type="submit" form="member-form" id="member-submit">
+            Submit Changes
+          </button>
+          <button class="button" type="button" id="member-add">Add New Member</button>
+        </div>
+
+        <div class="button-bar">
+          <a class="button" href="./sheet.html">&lt;= Back</a>
+          <button class="button" type="button" id="member-reset">Reset</button>
+          <a class="button" href="./help.html">Help</a>
+        </div>
+      </section>
+
+      <hr class="rule" />
+
+      <!-- --------------------------------------------- website settings -->
+      <section aria-labelledby="settings-heading">
+        <h2 class="section-heading" id="settings-heading">Website Settings</h2>
+        <form class="form-grid" id="settings-form" novalidate>
+          <label for="setting-title">Title:</label>
+          <input class="field" id="setting-title" type="text" maxlength="60" />
+
+          <label for="setting-days">Days Displayed:</label>
+          <input class="field" id="setting-days" type="number" min="1" max="60" />
+
+          <label for="setting-players">Players per Game:</label>
+          <input class="field" id="setting-players" type="number" min="2" max="12" />
+
+          <label for="setting-games">Max Games:</label>
+          <input class="field" id="setting-games" type="number" min="1" max="20" />
+
+          <label for="setting-max-players">Max Players:</label>
+          <input class="field" id="setting-max-players" type="number" min="4" max="200" />
+
+          <label for="setting-subs">Days Subs Protected:</label>
+          <input class="field" id="setting-subs" type="number" min="0" max="30" />
+
+          <label for="setting-no-changes">Days No Changes:</label>
+          <input class="field" id="setting-no-changes" type="number" min="0" max="30" />
+
+          <span id="guest-label" style="font-weight: 600; text-align: right">Guest Priority:</span>
+          <div role="radiogroup" aria-labelledby="guest-label">
+            <label class="choice" style="display: flex">
+              <input type="radio" name="guestPriority" value="regular" checked />
+              Same as Regular Player
+            </label>
+            <label class="choice" style="display: flex">
+              <input type="radio" name="guestPriority" value="substitute" />
+              Same as Substitute Player
+            </label>
+          </div>
+        </form>
+
+        <div class="button-bar">
+          <button class="button button--primary" type="submit" form="settings-form">
+            Submit New Settings
+          </button>
+        </div>
+      </section>
+
+      <!-- ----------------------------------------------- demo mail log -->
+      <section aria-labelledby="outbox-heading" id="outbox-section" hidden>
+        <hr class="rule" />
+        <h2 class="section-heading" id="outbox-heading">Demo Mail Log</h2>
+        <p style="text-align: center">
+          There is no mail server behind the demo, so messages the site would have sent are listed
+          here instead. Nothing has actually been delivered.
+        </p>
+        <table class="data-table" id="outbox-table">
+          <thead>
+            <tr>
+              <th scope="col">Sent</th>
+              <th scope="col">To</th>
+              <th scope="col">Subject</th>
+            </tr>
+          </thead>
+          <tbody id="outbox-body"></tbody>
+        </table>
+        <div class="button-bar">
+          <button class="button" type="button" id="reset-demo">Reset Demo Data</button>
+        </div>
+      </section>
+    </div>
+
+    <p class="footer">
+      Signed in as <strong id="signed-in-as">—</strong> · <span id="store-label"></span>
+    </p>
+
+    <script type="module" src="../src/tennis/pages/maint-entry.ts"></script>
+  </body>
+</html>
