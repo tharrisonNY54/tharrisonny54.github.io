@@ -3,6 +3,7 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/pages.css';
+import './styles/plates.css';
 
 // Self-hosted fonts (no CDN — bundled by Vite).
 // Only the weights the stylesheets actually use: 400 and 500.

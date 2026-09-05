@@ -4,27 +4,20 @@
  *   <div data-header></div> ... <div data-footer></div>
  */
 
-const NAV = [
-  { href: '/work.html', label: 'Work', index: '01' },
-  { href: '/projects.html', label: 'Projects', index: '02' },
-  { href: '/contact.html', label: 'Contact', index: '03' },
-];
-
-/** The resume is what a recruiter forwards, so it gets its own slot in the nav. */
-const RESUME_HREF = '/resume.pdf';
-
 export function mountChrome(): void {
   const headerSlot = document.querySelector('[data-header]');
   const footerSlot = document.querySelector('[data-footer]');
-  const path = location.pathname.replace(/\/$/, '/index.html');
 
+  /*
+   * The header carries the wordmark and nothing else.
+   *
+   * The row of page links that used to sit here is gone: the home page is
+   * navigated by scrolling, and each act carries the button for the place it
+   * describes. The wordmark stays because a way back to the index from the
+   * deeper pages is not optional, and the footer still lists every
+   * destination in full.
+   */
   if (headerSlot) {
-    const links = NAV.map((n) => {
-      const current = path.endsWith(n.href) ? ' aria-current="page"' : '';
-      return `<a href="${n.href}"${current}><span class="nav__index">${n.index}&nbsp;</span>${n.label}</a>`;
-    }).join('');
-    const resume =
-      `<a class="nav__resume" href="${RESUME_HREF}" target="_blank" rel="noopener">Resume<span aria-hidden="true">&#8599;</span></a>`;
     headerSlot.outerHTML = `
       <header class="site-header at-top">
         <div class="site-header__inner">
@@ -32,7 +25,6 @@ export function mountChrome(): void {
             <span class="wordmark__full">TREY HARRISON</span>
             <span class="wordmark__short" aria-hidden="true">TH</span>
           </a>
-          <nav class="nav" aria-label="Main navigation">${links}${resume}</nav>
         </div>
       </header>`;
   }

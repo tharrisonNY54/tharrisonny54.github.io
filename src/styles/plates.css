@@ -1,0 +1,876 @@
+/*
+ * Plates: the instrument wells inset into the paper.
+ *
+ * Every 3D canvas, photograph, and diagram on the site lives in a plate. A
+ * plate is a dark framed well with a mono caption bar, so imagery reads as a
+ * figure in a paper rather than as decoration. Because the surrounding page is
+ * light and the well is dark, nothing needs a scrim: text never sits on an
+ * image, which is what caused the legibility bugs in the previous design.
+ */
+
+.plate {
+  position: relative;
+  margin: 0;
+  background: var(--well);
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  overflow: hidden;
+  /* Sits slightly proud of the paper, like a plate tipped into a book. */
+  box-shadow: 0 1px 2px rgba(16, 19, 20, 0.05), 0 12px 32px -12px rgba(16, 19, 20, 0.18);
+}
+
+.plate__well {
+  position: relative;
+  background: var(--well);
+  overflow: hidden;
+}
+
+.plate__well img,
+.plate__well canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Canvas mounts fill their well absolutely. */
+.plate__well--canvas {
+  height: clamp(380px, 56vh, 620px);
+}
+/*
+ * Matched on the __canvas naming convention rather than on `> div`.
+ *
+ * `> div` also caught .plate__tag and .plate__controls, which are div siblings
+ * of the mount, and it outranks their own rules on specificity — so the mode
+ * toggle inherited inset:0 and stretched into a white slab down the side of
+ * the well. Only the render target should fill the frame.
+ */
+.plate__well--canvas > [class$='__canvas'] {
+  position: absolute;
+  inset: 0;
+}
+.plate__well--canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Caption bar: mono, inside the frame, separated by a hairline. */
+.plate__cap {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--well-2);
+  border-top: 1px solid rgba(233, 237, 237, 0.12);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--well-ink-2);
+}
+.plate__cap strong {
+  font-weight: 400;
+  color: var(--well-ink);
+}
+
+/* Labels floating inside the well itself (point counts, live status). */
+.plate__tag {
+  position: absolute;
+  left: 0.9rem;
+  bottom: 0.9rem;
+  z-index: 2;
+  display: grid;
+  gap: 0.25rem;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--well-ink-2);
+}
+
+.plate__controls {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  z-index: 3;
+  display: inline-flex;
+  border: 1px solid rgba(233, 237, 237, 0.24);
+  border-radius: 2px;
+  overflow: hidden;
+  background: rgba(10, 12, 13, 0.72);
+  backdrop-filter: blur(6px);
+}
+.plate__controls button {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--well-ink-2);
+  padding: 0.45rem 0.8rem;
+  min-height: 34px;
+  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.plate__controls button + button {
+  border-left: 1px solid rgba(233, 237, 237, 0.24);
+}
+.plate__controls button:hover {
+  color: var(--well-ink);
+}
+.plate__controls button[aria-pressed='true'] {
+  background: var(--well-ink);
+  color: var(--well);
+}
+
+@media (max-width: 640px) {
+  .plate__tag {
+    bottom: 3.4rem;
+  }
+  .plate__controls {
+    left: 0.9rem;
+    right: auto;
+  }
+}
+
+/* ============================================================
+   STAGE — the pinned point cloud and its four beats
+   ============================================================ */
+/*
+ * The home page opens on one full-bleed instrument well that stays pinned while
+ * four panels of copy scroll past it. The cloud inside redistributes itself
+ * between forms as they pass, so the same material carries every beat.
+ *
+ * Where the rest of the site insets dark plates into paper, here the well takes
+ * the whole viewport and the paper begins underneath it.
+ *
+ * The section is 4 x 100vh tall; the sticky child holds the canvas at viewport
+ * height. Scroll distance through the section is what drives the morph, so the
+ * panel count and the form count have to stay in step.
+ */
+.stage {
+  position: relative;
+  background: var(--well);
+  isolation: isolate;
+}
+
+.stage__sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.stage__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* Horizontal placement is done in world space by the renderer (see ACT_X in
+     hero-morph.ts), not here — a CSS transform would drag the bloom with it. */
+  opacity: 0;
+  transition: opacity 900ms var(--ease);
+}
+.stage__canvas.ready {
+  opacity: 1;
+}
+.stage__canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Slow bloom so the well never reads as a flat black rectangle. */
+.stage__sticky::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    58% 55% at 65% 46%,
+    rgba(90, 156, 170, 0.16) 0%,
+    rgba(14, 33, 40, 0.5) 45%,
+    transparent 78%
+  );
+}
+
+/*
+ * Reading scrims.
+ *
+ * The figure crosses the frame between acts and the copy takes the side it
+ * vacates, so the scrim has to travel too — a fixed left-hand gradient would
+ * end up darkening the figure and leaving the type sitting on bare points.
+ *
+ * Three stacked gradients that crossfade on opacity, rather than one gradient
+ * being rewritten: gradients do not interpolate between values, so swapping
+ * the definition would snap. The renderer sets data-side on .stage__sticky
+ * (hero-morph.ts) and the matching layer fades up.
+ */
+.stage__scrims {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.stage__scrims > span {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  /* Slower than the figure's own slide, so the ground settles a beat after the
+     figure lands rather than racing it. */
+  transition: opacity 900ms var(--ease);
+}
+
+.stage__sticky[data-side='right'] .stage__scrims > [data-scrim='left'],
+.stage__sticky[data-side='left'] .stage__scrims > [data-scrim='right'],
+.stage__sticky[data-side='centre'] .stage__scrims > [data-scrim='centre'] {
+  opacity: 1;
+}
+
+/* Figure right, copy left: darken the left. */
+.stage__scrims > [data-scrim='left'] {
+  background: linear-gradient(
+    100deg,
+    var(--well) 0%,
+    rgba(10, 12, 13, 0.92) 22%,
+    rgba(10, 12, 13, 0.55) 42%,
+    transparent 64%
+  );
+}
+
+/* Figure left, copy right: the same gradient mirrored. */
+.stage__scrims > [data-scrim='right'] {
+  background: linear-gradient(
+    260deg,
+    var(--well) 0%,
+    rgba(10, 12, 13, 0.92) 22%,
+    rgba(10, 12, 13, 0.55) 42%,
+    transparent 64%
+  );
+}
+
+/* Final act: the figure releases and the copy sits inside the cloud, so the
+   ground is a centred vignette instead of a side. */
+.stage__scrims > [data-scrim='centre'] {
+  background: radial-gradient(
+    46% 42% at 50% 50%,
+    rgba(10, 12, 13, 0.88) 0%,
+    rgba(10, 12, 13, 0.62) 45%,
+    transparent 78%
+  );
+}
+
+/* No side is chosen until the renderer runs; default to the opening act so the
+   first paint is never bare points under type. */
+.stage__sticky:not([data-side]) .stage__scrims > [data-scrim='left'] {
+  opacity: 1;
+}
+
+/*
+ * The Tucson label on the globe. Placed at the origin and moved by a transform
+ * the renderer writes each frame (hero-morph.ts) — transform-only movement
+ * keeps it on the compositor, where a left/top animation would force layout
+ * every frame.
+ *
+ * The offset is applied on a child so the renderer owns the outer transform
+ * and never has to know the label's own size.
+ */
+.stage__pin {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+  font-size: var(--fs-micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #ffcf9a;
+  /* Sits up and right of the pin head, clear of the spike. */
+  padding-left: 1.1rem;
+  padding-bottom: 0.55rem;
+  translate: 0 -100%;
+  text-shadow: 0 0 8px var(--well), 0 0 18px rgba(10, 12, 13, 0.95);
+}
+
+/* A short leader from the text back down to the head of the pin. */
+.stage__pin::before {
+  content: '';
+  position: absolute;
+  left: 0.1rem;
+  bottom: 0.2rem;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-left: 1px solid rgba(255, 207, 154, 0.55);
+  border-bottom: 1px solid rgba(255, 207, 154, 0.55);
+}
+
+@media (max-width: 900px) {
+  /* The globe is centred and smaller here; the label crowds it. */
+  .stage__pin {
+    display: none;
+  }
+}
+
+/*
+ * Just the point count now. The per-form caption that used to sit here named
+ * what the cloud currently was; it explained a thing the image already says,
+ * and it dated instantly whenever a form was retuned.
+ */
+.stage__meta {
+  position: absolute;
+  right: var(--gutter);
+  bottom: clamp(1.4rem, 4vh, 2.4rem);
+  z-index: 3;
+  text-align: right;
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--well-ink-2);
+  pointer-events: none;
+  /* The figure passes under this corner on two of the four acts, and the scrim
+     is on the far side then. A shadow keeps the label readable without adding
+     a panel that would show as a box over the empty acts. */
+  text-shadow: 0 0 6px var(--well), 0 0 14px var(--well);
+}
+
+/* ---- Panels ---- */
+/*
+ * Each panel is one viewport tall and scrolls over the pinned canvas. Only the
+ * text box takes pointer events, so the cloud behind stays interactive.
+ */
+.stage__panels {
+  position: relative;
+  z-index: 2;
+  /* Pulls the panels back up over the sticky canvas they scroll across. */
+  margin-top: -100svh;
+  pointer-events: none;
+}
+
+.panel {
+  /*
+   * Taller than the viewport, which is what sets the pace of the whole hero:
+   * scroll distance through the pinned stage is what drives the morph, so a
+   * taller panel buys each act a longer, less hurried transition. At 100svh
+   * the forms changed almost as fast as the wheel turned.
+   */
+  min-height: 200svh;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--gutter);
+  /* The tick rail that used to sit in this margin is gone, so the copy now
+     starts where the page's own gutter starts. */
+  padding-left: calc(var(--gutter) + 1.5rem);
+}
+
+/*
+ * Copy alternates sides in step with the figure: it always takes the half the
+ * figure is not in. The order here is load-bearing — it has to mirror ACT_X in
+ * hero-morph.ts, or the copy and the figure end up stacked on top of each
+ * other. Acts 1 and 3 put the figure right, act 2 left, act 4 centre.
+ */
+.panel:nth-child(1),
+.panel:nth-child(3) {
+  justify-content: flex-start;
+}
+
+.panel:nth-child(2) {
+  justify-content: flex-end;
+}
+
+/* Closing act: the figure releases and the copy sits inside the cloud. */
+.panel:nth-child(4) {
+  justify-content: center;
+  text-align: center;
+}
+.panel:nth-child(4) .panel__actions {
+  justify-content: center;
+}
+
+.panel__box {
+  /* Narrow enough that the figure clears the copy rather than relying on the
+     scrim alone to keep it readable. */
+  max-width: 33ch;
+  pointer-events: auto;
+  /* Each act's copy arrives from the side it belongs to. Set per-panel below. */
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+}
+
+/*
+ * Copy arrives from the side it belongs to and leaves the same way, so the
+ * horizontal move reads as one composition changing rather than as text being
+ * swapped behind a figure that happens to slide.
+ *
+ * Gated on .is-spied, which panel-spy.ts adds once its observer is running: if
+ * the script never runs, every panel keeps its resting state and stays
+ * readable.
+ */
+.stage.is-spied .panel__box {
+  opacity: 0;
+}
+.stage.is-spied .panel:nth-child(1) .panel__box,
+.stage.is-spied .panel:nth-child(3) .panel__box {
+  transform: translateX(-2.5rem);
+}
+.stage.is-spied .panel:nth-child(2) .panel__box {
+  transform: translateX(2.5rem);
+}
+.stage.is-spied .panel:nth-child(4) .panel__box {
+  transform: translateY(1.75rem);
+}
+.stage.is-spied .panel.is-current .panel__box {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The panels are unpinned in this mode, so there is no crossing to narrate;
+     a fade on each would just delay the copy. */
+  .stage.is-spied .panel__box,
+  .stage.is-spied .panel.is-current .panel__box {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.panel__eyebrow {
+  display: block;
+  color: var(--accent-glow);
+  margin-bottom: clamp(0.9rem, 2vw, 1.4rem);
+}
+
+.panel__h1 {
+  font-size: clamp(1.6rem, 1rem + 1.9vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: var(--well-ink);
+}
+
+.panel__h2 {
+  font-size: clamp(1.45rem, 1rem + 1.5vw, 2.2rem);
+  font-weight: 400;
+  line-height: 1.22;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+  color: var(--well-ink);
+}
+
+.panel__lead {
+  margin-top: clamp(1rem, 2vw, 1.4rem);
+  color: var(--well-ink-2);
+}
+
+.panel__note {
+  margin-top: 1.2rem;
+  color: var(--accent-glow);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+}
+
+/*
+ * The opening act's four destinations. A two-up grid rather than a wrapped
+ * flex row so the buttons line up into a block instead of leaving one link
+ * stranded on its own line — with the header nav removed this is the first
+ * navigation a visitor sees, and it should read as a set.
+ */
+.panel__actions--grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  max-width: 30rem;
+}
+.panel__actions--grid .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 420px) {
+  .panel__actions--grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Inside the well the buttons invert: light on dark, not ink on paper. */
+.stage .btn {
+  border-color: rgba(233, 237, 237, 0.32);
+  color: var(--well-ink);
+}
+.stage .btn:hover {
+  border-color: var(--well-ink);
+  background: rgba(233, 237, 237, 0.08);
+}
+.stage .btn--solid {
+  background: var(--well-ink);
+  border-color: var(--well-ink);
+  color: var(--well);
+}
+.stage .btn--solid:hover {
+  background: var(--accent-glow);
+  border-color: var(--accent-glow);
+  color: var(--well);
+}
+
+@media (max-width: 900px) {
+  /* Figure recentres (the renderer holds x at 0 below this width) and the copy
+     drops to the bottom, since there is no room for a side-by-side split. */
+  .stage__canvas {
+    transform: translateY(-14%);
+  }
+  .panel,
+  .panel:nth-child(1),
+  .panel:nth-child(2),
+  .panel:nth-child(3),
+  .panel:nth-child(4) {
+    align-items: flex-end;
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: var(--gutter);
+    padding-bottom: clamp(4rem, 14vh, 7rem);
+  }
+  .panel:nth-child(4) .panel__actions {
+    justify-content: flex-start;
+  }
+  .panel__box {
+    max-width: none;
+  }
+  /*
+   * The copy is full-width here and the figure stays centred, so there is no
+   * side-to-side composition for a horizontal entrance to describe. It also
+   * pushed the box past the viewport edge and added a horizontal scrollbar,
+   * since an off-screen transform still counts toward scroll width.
+   */
+  .stage.is-spied .panel:nth-child(1) .panel__box,
+  .stage.is-spied .panel:nth-child(2) .panel__box,
+  .stage.is-spied .panel:nth-child(3) .panel__box,
+  .stage.is-spied .panel:nth-child(4) .panel__box {
+    transform: translateY(1.5rem);
+  }
+  .stage.is-spied .panel.is-current .panel__box {
+    transform: none;
+  }
+  /* With the figure centred behind it, the copy needs a ground on every act. */
+  .stage__scrims > span,
+  .stage__sticky:not([data-side]) .stage__scrims > [data-scrim='left'] {
+    opacity: 0;
+  }
+  .stage__scrims > [data-scrim='centre'] {
+    opacity: 1 !important;
+    /* Reaches higher than a half-and-half split: the eyebrow line sits around
+       three-quarters up and was landing on bare shoulder. */
+    background: linear-gradient(
+      to top,
+      var(--well) 0%,
+      rgba(10, 12, 13, 0.94) 38%,
+      rgba(10, 12, 13, 0.62) 62%,
+      transparent 88%
+    );
+  }
+  .stage__meta {
+    display: none;
+  }
+}
+
+/*
+ * Reduced motion: unpin everything. The morph is scroll-driven, so with the
+ * stage released each panel simply becomes a normal stacked section and the
+ * cloud holds its first form.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .stage__sticky {
+    position: relative;
+  }
+  .stage__panels {
+    margin-top: 0;
+  }
+  .panel {
+    min-height: auto;
+    padding-block: var(--section);
+  }
+}
+
+/* ============================================================
+   CONSTELLATION — the index
+   ============================================================ */
+/*
+ * The second route around the site, and the one the page is really built
+ * around: four destinations suspended in the field of points the figure let
+ * go of directly above. Continuing the well rather than returning to paper
+ * here is deliberate — the index belongs to the hero sequence, and the paper
+ * document starts underneath it.
+ */
+.constel {
+  position: relative;
+  isolation: isolate;
+  background: var(--well);
+  min-height: clamp(30rem, 82vh, 46rem);
+  overflow: hidden;
+}
+
+.constel__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 900ms var(--ease);
+}
+.constel__canvas.ready {
+  opacity: 1;
+}
+.constel__canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Carries the well down out of the hero and up into the paper below, so the
+   two dark sections read as one space rather than as two stacked bands. */
+.constel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    70% 60% at 50% 50%,
+    rgba(24, 62, 72, 0.22) 0%,
+    transparent 72%
+  );
+}
+
+.constel__nodes {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+/*
+ * Positioned from custom properties set per link in the markup. The renderer
+ * measures the resulting boxes rather than being told the same coordinates a
+ * second time, so these values are the single source of the layout.
+ */
+.constel__node {
+  position: absolute;
+  left: var(--nx);
+  top: var(--ny);
+  /*
+   * Centring uses the independent `translate` property, and the hover response
+   * uses `scale`, so the two never share `transform`.
+   *
+   * They did share it, and the centring silently animated in from identity
+   * along with the hover transition. constellation.ts measures these boxes to
+   * place its clusters, and a measurement taken mid-transition came back off
+   * by half a label — which is exactly where the point rings landed.
+   */
+  translate: -50% -50%;
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  padding: 1rem 1.6rem;
+  text-align: center;
+  /* Comfortably past the 44px minimum in every direction. */
+  min-width: 11rem;
+  min-height: 5.5rem;
+  align-content: center;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease),
+    scale var(--dur) var(--ease);
+}
+
+.constel__no {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-wide);
+  color: var(--accent-glow);
+  opacity: 0.7;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.constel__label {
+  font-size: clamp(1.5rem, 1rem + 1.6vw, 2.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--well-ink);
+  /* The point field passes behind the labels, so they carry their own ground
+     rather than depending on where the clusters happen to sit. */
+  text-shadow: 0 0 10px var(--well), 0 0 24px rgba(10, 12, 13, 0.9);
+}
+.constel__label span {
+  font-size: 0.5em;
+  vertical-align: super;
+  margin-left: 0.15em;
+}
+
+.constel__sub {
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--well-ink-2);
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+
+.constel__node:hover,
+.constel__node:focus-visible {
+  border-color: rgba(233, 237, 237, 0.22);
+  /* Light enough that the cluster gathering behind the label stays visible —
+     the whole point of the interaction is watching it arrive. */
+  background: rgba(10, 12, 13, 0.26);
+  scale: 1.03;
+}
+.constel__node:hover .constel__sub,
+.constel__node:focus-visible .constel__sub {
+  opacity: 1;
+  transform: none;
+}
+.constel__node:hover .constel__no,
+.constel__node:focus-visible .constel__no {
+  opacity: 1;
+}
+
+/*
+ * Narrow screens cannot hold a scattered layout without the labels colliding,
+ * so the constellation collapses to a stacked index. The canvas stays: the
+ * clusters re-measure onto the new positions on resize, so the field simply
+ * reforms into a column behind the list.
+ */
+@media (max-width: 720px) {
+  .constel {
+    min-height: 0;
+    padding-block: var(--section);
+  }
+  .constel__nodes {
+    position: relative;
+    inset: auto;
+    display: grid;
+    gap: 0.75rem;
+    padding-inline: var(--gutter);
+  }
+  .constel__node {
+    position: relative;
+    left: auto;
+    top: auto;
+    translate: none;
+    justify-items: start;
+    text-align: left;
+    width: 100%;
+    border-color: var(--rule-2);
+    background: rgba(10, 12, 13, 0.55);
+  }
+  .constel__node:hover,
+  .constel__node:focus-visible {
+    scale: none;
+  }
+  .constel__sub {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================
+   LEDE — the opening spread
+   ============================================================ */
+/*
+ * Asymmetric 12-column split: text in the first 6, plate in the last 6 with a
+ * column of air between. The headline is ink on paper, so it is legible the
+ * instant the page paints, before any image or canvas resolves.
+ */
+.lede {
+  padding-top: calc(var(--header-h) + clamp(2.5rem, 6vw, 5.5rem));
+  padding-bottom: var(--section);
+}
+
+.lede__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: center;
+}
+
+.lede__text {
+  grid-column: 1 / span 6;
+}
+.lede__plate {
+  grid-column: 8 / span 5;
+}
+
+.lede__eyebrow {
+  display: block;
+  color: var(--ink-3);
+  margin-bottom: clamp(1rem, 2vw, 1.6rem);
+}
+
+.lede__h1 {
+  font-size: clamp(1.75rem, 1rem + 2.4vw, 3.1rem);
+  font-weight: 500;
+  line-height: 1.14;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+  max-width: 20ch;
+}
+
+.lede__avail {
+  margin-top: clamp(1.4rem, 3vw, 2.2rem);
+  padding-top: clamp(1.2rem, 2.5vw, 1.5rem);
+  border-top: 1px solid var(--rule);
+  display: grid;
+  gap: 0.5rem;
+  max-width: 46ch;
+}
+.lede__avail .mono {
+  color: var(--ink-2);
+  text-transform: none;
+  letter-spacing: 0.01em;
+  line-height: 1.55;
+}
+.lede__avail .mono:first-child {
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+}
+
+.lede__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+}
+
+/* Primary action is solid ink: the one unambiguous control on the page. */
+.btn--solid {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.btn--solid:hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  color: var(--paper);
+}
+
+@media (max-width: 900px) {
+  .lede__grid {
+    grid-template-columns: 1fr;
+    gap: clamp(2rem, 5vw, 3rem);
+  }
+  .lede__text,
+  .lede__plate {
+    grid-column: 1 / -1;
+  }
+  /* Plate first on narrow screens would push the headline below the fold. */
+  .lede__plate {
+    order: 2;
+  }
+}

@@ -14,12 +14,11 @@
   z-index: 60;
   display: flex;
   align-items: center;
-  background: rgba(8, 9, 11, 0.82);
-  backdrop-filter: blur(14px) saturate(120%);
-  -webkit-backdrop-filter: blur(14px) saturate(120%);
-  border-bottom: 1px solid var(--line);
-  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease),
-    backdrop-filter var(--dur) var(--ease);
+  background: color-mix(in srgb, var(--paper) 86%, transparent);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  border-bottom: 1px solid var(--rule);
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
 
 .site-header.at-top {
@@ -29,10 +28,35 @@
   border-bottom-color: transparent;
 }
 
-/* Browsers without backdrop-filter get a solid ground rather than a bare pane. */
+/*
+ * On pages whose hero is a full-bleed dark well, the header floats on the well
+ * and must invert while it is up there. Once scrolled it regains its paper
+ * ground and the normal ink colours apply again, so this is scoped to
+ * `.at-top` only. `hero-well` is set on <body> by those pages.
+ */
+.hero-well .site-header.at-top .wordmark,
+.over-stage .site-header .wordmark {
+  color: var(--well-ink);
+}
+
+/*
+ * Over the pinned stage the header keeps a dark ground rather than the paper
+ * one. Without this it turns light the moment the page scrolls, while the well
+ * behind it is still black.
+ */
+.over-stage .site-header:not(.at-top) {
+  background: color-mix(in srgb, var(--well) 82%, transparent);
+  border-bottom-color: rgba(233, 237, 237, 0.12);
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .over-stage .site-header:not(.at-top) {
+    background: var(--well);
+  }
+}
+
 @supports not (backdrop-filter: blur(1px)) {
   .site-header:not(.at-top) {
-    background: rgba(8, 9, 11, 0.96);
+    background: var(--paper);
   }
 }
 
@@ -53,90 +77,16 @@
   font-size: var(--fs-label);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: #fff;
+  color: var(--ink);
   display: inline-flex;
   align-items: baseline;
   gap: 0.4em;
   white-space: nowrap;
 }
 
-/* Collapses to initials on narrow screens so the nav never runs off-canvas. */
+/* Collapses to initials on the narrowest screens. */
 .wordmark__short {
   display: none;
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-  gap: clamp(1rem, 2.4vw, 2.6rem);
-}
-
-.nav a {
-  font-family: var(--font-mono);
-  font-size: var(--fs-label);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: #fff;
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px; /* WCAG 2.2 target size */
-  padding: 0.4rem 0;
-}
-
-/* The resume is the page's one real call to action — it reads as a control. */
-.nav__resume {
-  gap: 0.35em;
-  padding-inline: 0.7rem;
-  border: 1px solid var(--line-2);
-  border-radius: 2px;
-  min-height: 34px;
-  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
-}
-.nav__resume::after {
-  display: none; /* it has a border, it doesn't need the underline sweep too */
-}
-.nav__resume:hover {
-  border-color: var(--accent);
-  background: rgba(159, 199, 207, 0.08);
-}
-
-.nav a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0.1rem;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--dur) var(--ease);
-}
-
-.nav a:hover::after,
-.nav a[aria-current='page']::after {
-  transform: scaleX(1);
-}
-
-.nav a[aria-current='page'] {
-  opacity: 1;
-}
-
-.nav__index {
-  font-family: var(--font-mono);
-  font-size: var(--fs-micro);
-  color: #fff;
-  opacity: 0.5;
-}
-
-@media (max-width: 620px) {
-  .nav__index {
-    display: none;
-  }
-  .nav {
-    gap: 1.05rem;
-  }
 }
 
 @media (max-width: 480px) {
@@ -145,12 +95,6 @@
   }
   .wordmark__short {
     display: inline;
-  }
-  .nav {
-    gap: 0.85rem;
-  }
-  .nav a {
-    letter-spacing: 0.08em;
   }
 }
 
@@ -231,7 +175,7 @@
 }
 .btn:hover {
   border-color: var(--accent);
-  color: #fff;
+  color: var(--ink);
 }
 
 /* ============ Footer ============ */

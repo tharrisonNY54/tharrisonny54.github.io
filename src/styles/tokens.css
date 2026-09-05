@@ -1,68 +1,150 @@
+/*
+ * Design system: "paper and instrument wells".
+ *
+ * The page is a printed technical paper. The 3D scenes are instrument plates
+ * inset into it — dark wells with their own internal palette, framed and
+ * captioned like figures. The contrast between paper and well is the idea, so
+ * the two palettes stay deliberately separate: --ink/--paper for the document,
+ * --well-* for anything inside a canvas frame.
+ */
+
 :root {
-  /* ---- Surface ---- */
-  --bg: #08090b;
-  --bg-2: #0d0f13;
-  --bg-3: #14171c;
-  --paper: #f1eee7;
-  --paper-ink: #0b0c0d;
+  /* ---- Paper (document surface) ----
+     Cool neutral, biased very slightly toward the cyan accent so it reads as
+     chosen rather than inherited. Not a warm cream. */
+  --paper: #f1f3f3;
+  --paper-2: #e8ebeb;
+  --paper-3: #dfe3e3;
 
-  /* ---- Ink ----
-     Contrast against --bg: ink 17.4:1, dim 7.1:1, faint 4.75:1.
-     --ink-faint sits just above the 4.5:1 AA floor; don't darken it further. */
-  --ink: #e9e8e3;
-  --ink-dim: #9b9a94;
-  --ink-faint: #7d7c76;
+  /* ---- Ink (document text) ----
+     Contrast on --paper: ink 16.8:1, ink-2 7.9:1, ink-3 4.6:1. */
+  --ink: #101314;
+  --ink-2: #4a5254;
+  --ink-3: #6b7477;
 
-  /* ---- Lines ---- */
-  --line: rgba(233, 232, 227, 0.12);
-  --line-2: rgba(233, 232, 227, 0.24);
-  --line-3: rgba(233, 232, 227, 0.4);
+  /* ---- Instrument wells (inside canvas frames) ----
+     Never pure #000: OLED smear, and it flattens the point clouds. */
+  --well: #0a0c0d;
+  --well-2: #12161a;
+  --well-ink: #e9eded;
+  --well-ink-2: #93a0a3;
 
-  /* ---- Accent: cold instrument cyan, used sparingly for "live" cues ---- */
-  --accent: #9fc7cf;
-  --accent-ink: #0a1416;
-  --accent-dim: rgba(159, 199, 207, 0.5);
+  /* ---- Accent: instrument cyan ----
+     --accent is the light-ground version (5.2:1 on paper). --accent-glow is
+     the original pale cyan, which only works inside the dark wells. */
+  --accent: #1b6b7a;
+  --accent-strong: #10505c;
+  --accent-glow: #9fc7cf;
+  --accent-wash: rgba(27, 107, 122, 0.09);
 
-  /* ---- Type ---- */
+  /* ---- Rules ---- */
+  --rule: rgba(16, 19, 20, 0.14);
+  --rule-2: rgba(16, 19, 20, 0.28);
+  --rule-strong: rgba(16, 19, 20, 0.62);
+
+  /* ---- Type ----
+     Three families, roles reassigned for the paper metaphor:
+       sans  = headings and body
+       mono  = figure labels, data, captions
+       serif = pull quotes only */
   --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
   --font-mono: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
 
-  --fs-display: clamp(2.7rem, 1rem + 7.6vw, 7rem);
-  --fs-h1: clamp(2.1rem, 1rem + 4.4vw, 4.6rem);
-  --fs-h2: clamp(1.55rem, 1rem + 2.2vw, 2.9rem);
-  --fs-h3: clamp(1.2rem, 1rem + 0.9vw, 1.7rem);
-  --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
-  --fs-lead: clamp(1.15rem, 1rem + 0.7vw, 1.5rem);
+  --fs-display: clamp(2.6rem, 1rem + 7vw, 6.4rem);
+  --fs-h1: clamp(2rem, 1rem + 4.2vw, 4.2rem);
+  --fs-h2: clamp(1.5rem, 1rem + 2vw, 2.6rem);
+  --fs-h3: clamp(1.15rem, 1rem + 0.8vw, 1.55rem);
+  --fs-body: clamp(1rem, 0.97rem + 0.18vw, 1.09rem);
+  --fs-lead: clamp(1.12rem, 1rem + 0.6vw, 1.42rem);
   --fs-label: 0.78rem;
   --fs-micro: 0.72rem;
 
-  --tracking-label: 0.16em;
-  --tracking-wide: 0.24em;
+  --tracking-label: 0.15em;
+  --tracking-wide: 0.22em;
 
-  --lh-tight: 1.02;
-  --lh-snug: 1.18;
-  --lh-body: 1.62;
+  --lh-tight: 1.04;
+  --lh-snug: 1.16;
+  --lh-body: 1.6;
 
-  /* ---- Space ---- */
-  --gutter: clamp(1.25rem, 0.5rem + 3vw, 4rem);
-  /* Applied to both sides of adjacent sections, so the visual gap is ~2x this. */
+  /* ---- Grid (Swiss 12-column, 8px base) ---- */
+  --grid-cols: 12;
+  --unit: 8px;
+  --gutter: clamp(1.25rem, 0.5rem + 3vw, 3.5rem);
   --section: clamp(3.5rem, 2.5rem + 5vw, 7rem);
-  --maxw: 1560px;
+  --maxw: 1440px;
+  --measure: 68ch;
 
-  /* ---- Motion ---- */
-  --dur-fast: 180ms;
-  --dur: 420ms;
-  --dur-slow: 900ms;
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* ---- Motion ----
+     Expo-out is the house easing: fast start, long settle. Reads as
+     mechanical rather than bouncy, which suits the subject. */
+  --dur-fast: 160ms;
+  --dur: 320ms;
+  --dur-slow: 720ms;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* ---- Chrome ---- */
-  --header-h: 68px;
+  --header-h: 64px;
+
+  /* ---- Compatibility aliases ----
+     The previous dark system's names, remapped onto the paper palette so
+     existing component CSS keeps working while it is migrated. New code
+     should use the names above. */
+  --bg: var(--paper);
+  --bg-2: var(--paper-2);
+  --bg-3: var(--paper-3);
+  --ink-dim: var(--ink-2);
+  --ink-faint: var(--ink-3);
+  --line: var(--rule);
+  --line-2: var(--rule-2);
+  --line-3: var(--rule-strong);
+  --accent-dim: var(--accent-wash);
+  --accent-ink: var(--paper);
 }
 
 @media (max-width: 720px) {
   :root {
-    --header-h: 58px;
+    --header-h: 56px;
   }
+}
+
+/*
+ * Dark mode is a real alternate, not an inversion: the paper darkens toward
+ * the well so the plates stop being holes and start being continuous with the
+ * page. Accent swaps to the pale cyan, which only clears contrast on dark.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --paper: #0f1214;
+    --paper-2: #161a1d;
+    --paper-3: #1d2225;
+    --ink: #e9eded;
+    --ink-2: #a2acaf;
+    --ink-3: #7d8689;
+    --well: #07090a;
+    --well-2: #0e1215;
+    --accent: #9fc7cf;
+    --accent-strong: #c2dee3;
+    --accent-wash: rgba(159, 199, 207, 0.1);
+    --rule: rgba(233, 237, 237, 0.14);
+    --rule-2: rgba(233, 237, 237, 0.26);
+    --rule-strong: rgba(233, 237, 237, 0.6);
+  }
+}
+
+:root[data-theme='dark'] {
+  --paper: #0f1214;
+  --paper-2: #161a1d;
+  --paper-3: #1d2225;
+  --ink: #e9eded;
+  --ink-2: #a2acaf;
+  --ink-3: #7d8689;
+  --well: #07090a;
+  --well-2: #0e1215;
+  --accent: #9fc7cf;
+  --accent-strong: #c2dee3;
+  --accent-wash: rgba(159, 199, 207, 0.1);
+  --rule: rgba(233, 237, 237, 0.14);
+  --rule-2: rgba(233, 237, 237, 0.26);
+  --rule-strong: rgba(233, 237, 237, 0.6);
 }

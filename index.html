@@ -19,66 +19,188 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Trey Harrison — spacecraft geometry and volumetric capture" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#08090b" />
+    <!-- The page opens on the dark hero well, so the browser chrome matches it. -->
+    <meta name="theme-color" content="#0a0c0d" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script type="module" src="/src/pages/index-entry.ts"></script>
   </head>
-  <body class="is-loading">
+  <body class="is-loading hero-well">
     <a class="skip" href="#main">Skip to content</a>
     <div data-header></div>
 
     <div class="shell">
       <main id="main">
-        <!-- ============ HERO ============ -->
-        <section class="work-hero work-hero--center" aria-label="Introduction">
-          <img
-            class="work-hero__bg"
-            src="/img/aspera-orbit.webp"
-            alt=""
-            width="1200"
-            height="670"
-            loading="eager"
-            fetchpriority="high"
-          />
-          <div class="work-hero__shade" aria-hidden="true"></div>
-          <div class="work-hero__grain" aria-hidden="true"></div>
-          <span class="work-hero__credit mono mono--micro">ASPERA ORBIT RENDER / NASA &middot; UARIZONA</span>
-          <div class="work-hero__meta" aria-hidden="true">
-            <span class="mono mono--micro">Tucson, AZ</span>
+        <!-- ============ STAGE — pinned point cloud, four beats ============ -->
+        <section class="stage" aria-label="Introduction">
+          <div class="stage__sticky">
+            <div
+              class="stage__canvas"
+              role="img"
+              aria-label="A cloud of 18,000 points that reforms as the page scrolls. It opens as a volumetric scan of Trey Harrison, cropped to head and shoulders and cut into horizontal contour bands, then becomes a banded sphere with two inclined rings, then a swept grid surface, then disperses. The captured colour is discarded throughout."
+            ></div>
+
+            <div class="stage__scrims" aria-hidden="true">
+              <span data-scrim="left"></span>
+              <span data-scrim="right"></span>
+              <span data-scrim="centre"></span>
+            </div>
+
+            <!--
+              Positioned each frame from the pin's projected 3D position and
+              faded in with the globe, so it belongs to the marker rather than
+              floating over the scene. aria-hidden because the canvas's own
+              description already names it.
+            -->
+            <div class="stage__pin mono" data-stage-pin aria-hidden="true">Tucson, AZ</div>
+
+            <div class="stage__meta mono" aria-hidden="true">18,000 points</div>
           </div>
-          <div class="work-hero__inner">
-            <h1 class="hero__title enter" style="--enter-delay: 220ms">
-              I write data analysis software for NASA&rsquo;s Aspera mission and build volumetric
-              capture pipelines at the University of Arizona.
-            </h1>
-            <p class="hero__avail enter" style="--enter-delay: 340ms">
-              <span class="mono">B.S. Computer Science, Dec 2027 &middot; M.S. 2029</span>
-              <span class="mono">Looking for a summer 2027 internship. NASA, a startup, or anywhere
-                working on something challenging. Happy to relocate.</span>
-            </p>
+
+          <div class="stage__panels">
+            <article class="panel" id="s-intro">
+              <div class="panel__box">
+                <span class="mono panel__eyebrow">Trey Harrison / Computer Scientist / Tucson, AZ</span>
+                <h1 class="panel__h1">
+                  I write data analysis software for NASA&rsquo;s Aspera mission and build volumetric
+                  capture pipelines at the University of Arizona.
+                </h1>
+                <p class="panel__lead">
+                  B.S. Computer Science, December 2027. M.S. May 2029. Looking for a summer 2027
+                  internship.
+                </p>
+                <!--
+                  The four destinations, on the opening act. With the header
+                  nav gone these are the primary navigation, so they are real
+                  links sitting above the fold rather than anything the
+                  renderer has to draw.
+                -->
+                <div class="panel__actions panel__actions--grid">
+                  <a class="btn" href="/work.html">Work experience</a>
+                  <a class="btn" href="/projects.html">Projects</a>
+                  <a class="btn btn--solid" href="/resume.pdf" target="_blank" rel="noopener"
+                    >Download resume<span aria-hidden="true">&#8599;</span></a
+                  >
+                  <a class="btn" href="/contact.html">Contact</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel" id="s-work">
+              <div class="panel__box">
+                <span class="mono panel__eyebrow">02 &mdash; Work</span>
+                <h2 class="panel__h2">Three jobs so far, all at the University of Arizona.</h2>
+                <p class="panel__lead">
+                  On Aspera I write code that analyzes the science data the spacecraft will send down
+                  after launch, fix bugs, and plan around NASA constraints. Before that, volumetric
+                  capture at the Center for Digital Humanities, and a semester as a TA for data
+                  structures and algorithms.
+                </p>
+                <div class="panel__actions">
+                  <a class="btn btn--solid" href="/work.html"
+                    >Work experience<span aria-hidden="true">&#8599;</span></a
+                  >
+                </div>
+              </div>
+            </article>
+
+            <article class="panel" id="s-projects">
+              <div class="panel__box">
+                <span class="mono panel__eyebrow">03 &mdash; Projects</span>
+                <h2 class="panel__h2">Things I built because I wanted them to exist.</h2>
+                <p class="panel__lead">
+                  A messaging system for a hospital robot, a chatbot that answers questions about
+                  Q# by reading the docs instead of guessing, and this site. None of them were
+                  assignments.
+                </p>
+                <div class="panel__actions">
+                  <a class="btn btn--solid" href="/projects.html"
+                    >Projects<span aria-hidden="true">&#8599;</span></a
+                  >
+                </div>
+              </div>
+            </article>
+
+            <article class="panel" id="s-contact">
+              <div class="panel__box">
+                <span class="mono panel__eyebrow">04 &mdash; Contact</span>
+                <h2 class="panel__h2">Looking for a summer 2027 internship.</h2>
+                <p class="panel__lead">
+                  NASA, a startup, or anywhere working on something challenging. Happy to relocate
+                  for the summer.
+                </p>
+                <div class="panel__actions">
+                  <a class="btn btn--solid" href="mailto:treyh413@outlook.com">Email me</a>
+                  <a class="btn" href="/contact.html">Contact</a>
+                  <a class="btn" href="/resume.pdf" target="_blank" rel="noopener"
+                    >Download resume<span aria-hidden="true">&#8599;</span></a
+                  >
+                </div>
+              </div>
+            </article>
           </div>
+        </section>
+
+        <!-- ============ CONSTELLATION — the index ============ -->
+        <!--
+          The second way around the site. Real anchors, positioned by CSS; the
+          point field behind them is drawn by src/constellation.ts, which
+          measures these elements rather than holding its own copy of the
+          layout. With the script or WebGL unavailable this degrades to a
+          plain list of links, which is all it fundamentally is.
+        -->
+        <section class="constel" aria-labelledby="constel-h">
+          <h2 class="visually-hidden" id="constel-h">Index</h2>
+          <div class="constel__canvas" aria-hidden="true"></div>
+
+          <nav class="constel__nodes" aria-label="Index">
+            <a class="constel__node" style="--nx: 24%; --ny: 27%" href="/work.html">
+              <span class="constel__no mono">01</span>
+              <span class="constel__label">Work</span>
+              <span class="constel__sub mono">Aspera &middot; CDH &middot; TA</span>
+            </a>
+            <a class="constel__node" style="--nx: 74%; --ny: 22%" href="/projects.html">
+              <span class="constel__no mono">02</span>
+              <span class="constel__label">Projects</span>
+              <span class="constel__sub mono">Robot &middot; RAG &middot; This site</span>
+            </a>
+            <a class="constel__node" style="--nx: 28%; --ny: 73%" href="/resume.pdf" target="_blank" rel="noopener">
+              <span class="constel__no mono">03</span>
+              <span class="constel__label">Resume<span aria-hidden="true">&#8599;</span></span>
+              <span class="constel__sub mono">PDF &middot; one page</span>
+            </a>
+            <a class="constel__node" style="--nx: 76%; --ny: 70%" href="/contact.html">
+              <span class="constel__no mono">04</span>
+              <span class="constel__label">Contact</span>
+              <span class="constel__sub mono">Email &middot; GitHub &middot; LinkedIn</span>
+            </a>
+          </nav>
         </section>
 
         <!-- ============ ABOUT + SCAN ============ -->
         <section class="section" aria-labelledby="about-h">
           <div class="wrap">
             <div class="scan-row">
-              <div
-                class="scan-stage reveal"
-                role="img"
-                aria-label="Volumetric capture of Trey Harrison rendered as a point cloud with a scanline sweep"
-              >
-                <div class="scan-stage__canvas" aria-hidden="true"></div>
-                <div class="scan-stage__tag"><span class="status"><span class="status__dot"></span>Live render &middot; drag to rotate</span></div>
-                <div class="scan-stage__meta">
-                  <span class="mono mono--micro">VOLUMETRIC SCAN 001</span>
-                  <span class="mono mono--micro">88,704 PTS &middot; CAPTURED IN-HOUSE</span>
+              <figure class="plate scan-stage reveal">
+                <div
+                  class="plate__well plate__well--canvas"
+                  role="img"
+                  aria-label="Volumetric capture of Trey Harrison rendered as a point cloud with a scanline sweep"
+                >
+                  <div class="scan-stage__canvas" aria-hidden="true"></div>
+                  <div class="plate__tag">
+                    <span>88,704 pts &middot; captured in-house</span>
+                    <span>Drag to rotate</span>
+                  </div>
+                  <div class="plate__controls" role="group" aria-label="Scan display mode">
+                    <button type="button" data-mode="points" aria-pressed="true">Points</button>
+                    <button type="button" data-mode="mesh" aria-pressed="false">Capture</button>
+                  </div>
                 </div>
-                <div class="scan-mode" role="group" aria-label="Scan display mode">
-                  <button type="button" data-mode="points" aria-pressed="true">Points</button>
-                  <button type="button" data-mode="mesh" aria-pressed="false">Capture</button>
-                </div>
-              </div>
+                <figcaption class="plate__cap">
+                  <span><strong>Fig. 01</strong> Volumetric scan</span>
+                  <span>Live render</span>
+                </figcaption>
+              </figure>
               <div class="scan-row__text">
                 <span class="mono reveal" id="about-h">About</span>
                 <div class="about__body">
@@ -108,7 +230,7 @@
         </section>
 
         <!-- ============ EXPERIENCE ============ -->
-        <section class="section" aria-labelledby="index-h">
+        <section class="section" id="index" aria-labelledby="index-h">
           <div class="wrap">
             <div class="section-head reveal">
               <h2 id="index-h">Experience</h2>

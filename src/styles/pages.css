@@ -284,9 +284,13 @@
   gap: clamp(2rem, 5vw, 5.5rem);
   align-items: center;
 }
+/*
+ * No fixed height. This element is now a .plate as well as a .scan-stage, and
+ * the plate sizes itself from its well plus its caption bar. Forcing a height
+ * on top of that left ~100px of empty frame hanging below the caption.
+ */
 .scan-stage {
   position: relative;
-  height: clamp(440px, 72vh, 660px);
   border: 1px solid var(--line);
   border-radius: 2px;
   overflow: hidden;
@@ -434,7 +438,8 @@
     grid-template-columns: 1fr;
     gap: 2.4rem;
   }
-  .scan-stage {
+  /* The well carries the height here too; see .scan-stage above. */
+  .plate__well--canvas {
     height: clamp(380px, 60vh, 520px);
   }
 }

@@ -32,16 +32,29 @@ body {
   overflow-x: hidden;
 }
 
-/* Faint film grain + vignette so the black never reads as flat #000. */
+/*
+ * Vignette. Held at zero on paper: the previous value was a black wash tuned
+ * for the dark design, and on a light ground it smeared grey across the lower
+ * half of every page. Only the dark theme gets a vignette now, and a far
+ * gentler one, because dark is the only ground it can sit on without dirtying.
+ */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background:
-    radial-gradient(120% 90% at 50% 0%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
-  mix-blend-mode: normal;
+  background: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) body::before {
+    background: radial-gradient(120% 90% at 50% 0%, transparent 60%, rgba(0, 0, 0, 0.38) 100%);
+  }
+}
+
+:root[data-theme='dark'] body::before {
+  background: radial-gradient(120% 90% at 50% 0%, transparent 60%, rgba(0, 0, 0, 0.38) 100%);
 }
 
 img,
@@ -114,6 +127,25 @@ button {
 
 .faint {
   color: var(--ink-faint);
+}
+
+/*
+ * Available to assistive tech, absent from the visual design. Used where a
+ * section needs a heading for the document outline but the layout already
+ * makes its purpose obvious — the constellation index, for one.
+ */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  border: 0;
+  /* inset(50%) rather than a 0-size rect: Safari drops the node from the
+     accessibility tree when the clip region collapses to nothing. */
+  clip-path: inset(50%);
 }
 
 /* Skip link */
