@@ -40,3 +40,14 @@ shots/
 
 # local source assets — never ship to client
 /assets/
+
+# local screenshot harness output (shots/, shots-v2/, shots-final/, ...)
+shots-*/
+
+# throwaway debug/verification scripts
+scripts/_tmp-*.mjs
+
+# stray local source assets kept beside the repo, not shipped
+/6_26 Resume.pdf
+/aspera_mockup.jpg
+/aspera_satelite.png
