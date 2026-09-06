@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { buildSheetView, indexSignups, preferenceFor } from './sheet.js';
+import { buildSheetView, indexSignups, preferenceFor, rosterForDay } from './sheet.js';
 import { findPromotions } from './promotions.js';
 import { DEFAULT_SETTINGS } from '../data/seed.js';
 import type { Member, Preference, Sheet, Signup } from '../types.js';
@@ -176,5 +176,40 @@ describe('findPromotions', () => {
     );
 
     expect(findPromotions(full, broken)).toEqual([]);
+  });
+});
+
+describe('rosterForDay', () => {
+  test('splits the day into playing, waiting and out, in seat order', () => {
+    const members = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6'].map((id) => member(id));
+    const signups = [
+      ...members.slice(0, 5).map((m, index) => signup(m.id, 'A', index + 1)),
+      signup('m6', 'N', 0),
+    ];
+
+    const view = buildSheetView(sheetWith(members, signups), NOW);
+    const roster = rosterForDay(members, view.days.get(FIRST_DATE));
+
+    expect(roster.playing.map((m) => m.id)).toEqual(['m1', 'm2', 'm3', 'm4']);
+    expect(roster.available.map((m) => m.id)).toEqual(['m5']);
+    expect(roster.unavailable.map((m) => m.id)).toEqual(['m6']);
+  });
+
+  test('leaves members who entered nothing out of every group', () => {
+    const members = [member('m1'), member('m2')];
+    const view = buildSheetView(sheetWith(members, []), NOW);
+    const roster = rosterForDay(members, view.days.get(FIRST_DATE));
+
+    expect(roster.playing).toEqual([]);
+    expect(roster.available).toEqual([]);
+    expect(roster.unavailable).toEqual([]);
+  });
+
+  test('returns empty groups for a date that is not on the sheet', () => {
+    const roster = rosterForDay([member('m1')], undefined);
+
+    expect(roster.playing).toEqual([]);
+    expect(roster.available).toEqual([]);
+    expect(roster.unavailable).toEqual([]);
   });
 });

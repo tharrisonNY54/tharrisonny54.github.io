@@ -4,7 +4,7 @@
  * day of play" that the original site marks with a blue seat button.
  */
 
-import type { DisplayStatus, Preference, Sheet, Signup } from '../types.js';
+import type { DisplayStatus, Member, Preference, Sheet, Signup } from '../types.js';
 import { daysUntil, groupIntoWeeks, startOfToday, upcomingPlayDates } from './dates.js';
 import { drawForDate, effectiveType, isDateLocked, type DrawCandidate } from './draw.js';
 
@@ -23,6 +23,13 @@ export interface SheetView {
   days: Map<string, DayView>;
   /** Seat button highlighted blue: last to sign up for the next play date. */
   lastSignupMemberId: string | null;
+}
+
+/** The three groups the day-by-day view lists under each date. */
+export interface DayRoster {
+  playing: Member[];
+  available: Member[];
+  unavailable: Member[];
 }
 
 export function signupKey(memberId: string, date: string): string {
@@ -106,4 +113,25 @@ function findLastSignup(index: Map<string, Signup>, nextDate: string | undefined
   }
 
   return latest?.memberId ?? null;
+}
+
+/**
+ * Splits the roster for one day into playing, waiting and out.
+ *
+ * Members who have entered nothing are left out entirely, the same way the grid
+ * leaves their cell blank rather than listing them as undecided. Input order is
+ * preserved, so names come back in seat order.
+ */
+export function rosterForDay(members: readonly Member[], day: DayView | undefined): DayRoster {
+  const roster: DayRoster = { playing: [], available: [], unavailable: [] };
+  if (!day) return roster;
+
+  for (const member of members) {
+    const status = day.statuses.get(member.id) ?? 'O';
+    if (status === 'P') roster.playing.push(member);
+    else if (status === 'A') roster.available.push(member);
+    else if (status === 'N') roster.unavailable.push(member);
+  }
+
+  return roster;
 }

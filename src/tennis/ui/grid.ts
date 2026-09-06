@@ -41,11 +41,17 @@ export function renderHead(head: HTMLTableSectionElement, view: SheetView): void
   const dateRow = el('tr');
   const dayRow = el('tr');
 
+  // One header cell per column. A single cell spanning both would let its own
+  // content decide how the two sticky columns are shared, and the offsets the
+  // stylesheet pins them at would stop matching.
+  const seatCorner = el('th', { className: 'seat-head' });
+  seatCorner.rowSpan = 2;
+  seatCorner.setAttribute('aria-hidden', 'true');
+
   const corner = el('th', { className: 'members-head', text: 'MEMBERS' });
-  corner.colSpan = 2;
   corner.rowSpan = 2;
   corner.scope = 'col';
-  dateRow.append(corner);
+  dateRow.append(seatCorner, corner);
 
   appendDateColumns(dateRow, dayRow, view);
   head.append(dateRow, dayRow);
@@ -89,13 +95,12 @@ export function renderFoot(
   const dateRow = el('tr');
   const dayRow = el('tr');
 
-  const contactCell = el('td', { className: 'name-cell' });
+  const contactCell = el('td', { className: 'row-label' });
   contactCell.colSpan = 2;
-  contactCell.style.background = 'transparent';
   contactCell.append(contactButton);
   dateRow.append(contactCell);
 
-  const spacer = el('td');
+  const spacer = el('td', { className: 'row-label' });
   spacer.colSpan = 2;
   dayRow.append(spacer);
 
@@ -172,7 +177,7 @@ function describeStatus(status: string): string {
 function editRow(view: SheetView, edit: EditRowOptions): HTMLTableRowElement {
   const row = el('tr', { className: 'edit-row' });
 
-  const label = el('td', { className: 'name-cell', text: fullName(edit.member) });
+  const label = el('td', { className: 'row-label', text: fullName(edit.member) });
   label.colSpan = 2;
   row.append(label);
 

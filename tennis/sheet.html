@@ -15,17 +15,37 @@
 
     <p class="notice" id="sheet-notice" hidden role="status"></p>
 
-    <main class="sheet-scroll">
-      <table class="sheet" id="sheet-table">
-        <caption class="visually-hidden">
-          Sign up status for each member on each upcoming day of play. Green P means playing,
-          yellow A means available and waiting for a game to fill, grey N means not available,
-          and a blank cell means no preference entered.
-        </caption>
-        <thead id="sheet-head"></thead>
-        <tbody id="sheet-body"></tbody>
-        <tfoot id="sheet-foot"></tfoot>
-      </table>
+    <div class="sheet-controls">
+      <div class="layout-toggle" role="group" aria-label="How to show the sheet">
+        <button class="layout-toggle__button" type="button" id="layout-days" aria-pressed="false">
+          Day by day
+        </button>
+        <button class="layout-toggle__button" type="button" id="layout-grid" aria-pressed="false">
+          Full grid
+        </button>
+      </div>
+
+      <p class="editing-bar" id="editing-bar" hidden>
+        <label for="editing-member">Signing up</label>
+        <select class="field" id="editing-member"></select>
+      </p>
+    </div>
+
+    <main id="sheet-main">
+      <div class="sheet-scroll" id="sheet-grid-view">
+        <table class="sheet" id="sheet-table">
+          <caption class="visually-hidden">
+            Sign up status for each member on each upcoming day of play. Green P means playing,
+            yellow A means available and waiting for a game to fill, grey N means not available,
+            and a blank cell means no preference entered.
+          </caption>
+          <thead id="sheet-head"></thead>
+          <tbody id="sheet-body"></tbody>
+          <tfoot id="sheet-foot"></tfoot>
+        </table>
+      </div>
+
+      <div class="day-list" id="sheet-day-view"></div>
     </main>
 
     <div class="button-bar">

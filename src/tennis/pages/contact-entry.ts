@@ -39,9 +39,9 @@ function renderRoster(): void {
   tableBody.replaceChildren();
 
   for (const member of contactableMembers()) {
-    const row = el('tr');
+    const row = el('tr', { attrs: { role: 'row' } });
 
-    const selectCell = el('td');
+    const selectCell = cell('Select');
     const checkbox = el('input', {
       attrs: { type: 'checkbox', 'aria-label': `Select ${fullName(member)}` },
       dataset: { memberId: member.id },
@@ -51,10 +51,10 @@ function renderRoster(): void {
 
     row.append(
       selectCell,
-      el('td', { text: String(member.seat) }),
+      cell('Row', String(member.seat)),
       nameCell(member),
-      el('td', { text: member.phone || '—' }),
-      el('td', { text: member.mobile || '—' }),
+      cell('Phone', member.phone || '—'),
+      cell('Mobile', member.mobile || '—'),
       emailCell(member),
     );
 
@@ -72,31 +72,43 @@ function contactableMembers(): Member[] {
   return sheet.members.filter((member) => !member.isGuestSlot);
 }
 
+/**
+ * `data-label` is what the narrow-screen stylesheet prints in front of the
+ * value once the six columns stack into one block per member; the explicit
+ * role keeps the cell in the accessibility tree when the table stops being
+ * laid out as a table.
+ */
+function cell(label?: string, text?: string): HTMLTableCellElement {
+  const node = el('td', { text, attrs: { role: 'cell' } });
+  if (label) node.dataset.label = label;
+  return node;
+}
+
 function nameCell(member: Member): HTMLTableCellElement {
-  const cell = el('td', { text: fullName(member) });
-  cell.style.fontWeight = '600';
-  cell.style.color = member.isAdmin
+  const node = cell('Member', fullName(member));
+  node.style.fontWeight = '600';
+  node.style.color = member.isAdmin
     ? 'var(--name-admin)'
     : member.type === 'substitute'
       ? 'var(--name-substitute)'
       : 'var(--name-regular)';
-  return cell;
+  return node;
 }
 
 function emailCell(member: Member): HTMLTableCellElement {
-  const cell = el('td');
+  const node = cell('Email');
   if (!member.email) {
-    cell.textContent = '—';
-    return cell;
+    node.textContent = '—';
+    return node;
   }
 
-  cell.append(
+  node.append(
     el('a', {
       text: member.email,
       attrs: { href: mailtoLink([member.email], `${sheet.settings.title}`) },
     }),
   );
-  return cell;
+  return node;
 }
 
 function wireEmailButtons(): void {

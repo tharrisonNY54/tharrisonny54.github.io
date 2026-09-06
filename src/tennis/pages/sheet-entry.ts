@@ -1,12 +1,14 @@
 import '../styles/tennis.css';
 
 import { getStore, isEmailMuted, type PreferenceChange } from '../data/index.js';
+import { readLayout, writeLayout, type SheetLayout } from '../lib/layout.js';
 import { promotionEmail } from '../lib/mail.js';
 import { findPromotions } from '../lib/promotions.js';
 import { buildSheetView, indexSignups, preferenceFor, type SheetView } from '../lib/sheet.js';
 import { endSession, forgetLogin, readSession, requireSession, setEditingMember } from '../lib/session.js';
 import type { Member, Preference, Sheet } from '../types.js';
 import { fullName } from '../types.js';
+import { renderDayList } from '../ui/day-list.js';
 import { describeError, el, hideNotice, need, showNotice } from '../ui/dom.js';
 import { renderBody, renderFoot, renderHead } from '../ui/grid.js';
 
@@ -18,6 +20,11 @@ const notice = need<HTMLParagraphElement>('#sheet-notice');
 const head = need<HTMLTableSectionElement>('#sheet-head');
 const body = need<HTMLTableSectionElement>('#sheet-body');
 const foot = need<HTMLTableSectionElement>('#sheet-foot');
+const dayView = need<HTMLElement>('#sheet-day-view');
+const daysButton = need<HTMLButtonElement>('#layout-days');
+const gridButton = need<HTMLButtonElement>('#layout-grid');
+const editingBar = need<HTMLElement>('#editing-bar');
+const editingSelect = need<HTMLSelectElement>('#editing-member');
 const submitButton = need<HTMLButtonElement>('#submit-changes');
 const resetButton = need<HTMLButtonElement>('#reset-changes');
 const logoutButton = need<HTMLButtonElement>('#logout');
@@ -33,6 +40,8 @@ let signedInMember!: Member;
 let editingMemberId!: string;
 /** Dropdown values that have not been submitted yet. */
 let pending = new Map<string, Preference>();
+/** Grid on a desktop, day cards on a phone, and the member can switch. */
+let layout: SheetLayout = readLayout();
 
 if (session) void start();
 
@@ -41,6 +50,10 @@ async function start(): Promise<void> {
   submitButton.addEventListener('click', onSubmit);
   resetButton.addEventListener('click', onReset);
   logoutButton.addEventListener('click', onLogout);
+  daysButton.addEventListener('click', () => setLayout('days'));
+  gridButton.addEventListener('click', () => setLayout('grid'));
+  editingSelect.addEventListener('change', () => onSelectMember(editingSelect.value));
+  applyLayout();
 
   try {
     await reload();
@@ -90,6 +103,22 @@ function render(): void {
   const editingMember =
     sheet.members.find((member) => member.id === editingMemberId) ?? signedInMember;
 
+  renderEditingBar(editingMember);
+
+  // Only the visible layout is built, so switching does not leave a stale copy
+  // of the sheet in the document for screen readers to walk through.
+  if (layout === 'grid') {
+    dayView.replaceChildren();
+    renderGrid(editingMember);
+  } else {
+    head.replaceChildren();
+    body.replaceChildren();
+    foot.replaceChildren();
+    renderDays(editingMember);
+  }
+}
+
+function renderGrid(editingMember: Member): void {
   renderHead(head, view);
   renderBody(body, sheet, view, {
     editingMemberId,
@@ -102,6 +131,50 @@ function render(): void {
     saved: readPreferences(editingMemberId),
     onChange: (date, preference) => pending.set(date, preference),
   });
+}
+
+function renderDays(editingMember: Member): void {
+  renderDayList(dayView, sheet, view, {
+    member: editingMember,
+    pending,
+    saved: readPreferences(editingMemberId),
+    onChange: (date, preference) => pending.set(date, preference),
+    // An administrator already has the member's name in the picker above.
+    showMemberName: !signedInMember.isAdmin,
+  });
+}
+
+/**
+ * The grid lets an administrator switch members with the seat buttons, which
+ * the day cards do not have, so the picker carries that across both layouts.
+ */
+function renderEditingBar(editingMember: Member): void {
+  editingBar.hidden = !signedInMember.isAdmin;
+  if (!signedInMember.isAdmin) return;
+
+  editingSelect.replaceChildren();
+  for (const member of sheet.members) {
+    const option = el('option', {
+      text: `${member.seat}. ${fullName(member)}`,
+      attrs: { value: member.id },
+    });
+    if (member.id === editingMember.id) option.selected = true;
+    editingSelect.append(option);
+  }
+}
+
+function setLayout(next: SheetLayout): void {
+  if (next === layout) return;
+  layout = next;
+  writeLayout(next);
+  applyLayout();
+  render();
+}
+
+function applyLayout(): void {
+  document.body.dataset.layout = layout;
+  daysButton.setAttribute('aria-pressed', String(layout === 'days'));
+  gridButton.setAttribute('aria-pressed', String(layout === 'grid'));
 }
 
 function contactButton(): HTMLElement {
@@ -117,7 +190,11 @@ function onSelectMember(memberId: string): void {
     const confirmed = window.confirm(
       'You have changes that have not been submitted. Switching members will discard them.',
     );
-    if (!confirmed) return;
+    if (!confirmed) {
+      // Put the picker back on the member whose changes are still pending.
+      editingSelect.value = editingMemberId;
+      return;
+    }
   }
 
   editingMemberId = memberId;
