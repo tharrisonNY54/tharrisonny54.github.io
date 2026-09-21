@@ -32,8 +32,8 @@ export const DEFAULT_SETTINGS: Settings = {
   daysSubsProtected: 3,
   daysNoChanges: 0,
   guestPriority: 'regular',
-  // Monday, Wednesday, Friday, Saturday.
-  playDays: [1, 3, 5, 6],
+  // Monday, Wednesday, Friday.
+  playDays: [1, 3, 5],
   announcement: 'Start Time: 7am - 9/2 8am',
   announcementBlink: true,
 };
@@ -136,7 +136,7 @@ export function buildSeedSignups(members: readonly Member[], settings: Settings,
     if (member.isGuestSlot) continue;
 
     for (const [dateIndex, date] of dates.entries()) {
-      const preference = pickPreference(member.type, date, random);
+      const preference = pickPreference(member.type, random);
       if (preference === 'O') continue;
 
       signups.push({
@@ -156,15 +156,9 @@ export function buildSeedSignups(members: readonly Member[], settings: Settings,
   return signups;
 }
 
-function pickPreference(
-  type: Member['type'],
-  date: string,
-  random: () => number,
-): Signup['preference'] {
-  const isSaturday = new Date(`${date}T00:00:00`).getDay() === 6;
+function pickPreference(type: Member['type'], random: () => number): Signup['preference'] {
   const roll = random();
 
-  if (isSaturday) return roll < 0.12 ? 'A' : 'O';
   if (type === 'substitute') {
     if (roll < 0.16) return 'A';
     return roll < 0.24 ? 'N' : 'O';

@@ -276,7 +276,7 @@ values (
     'daysSubsProtected', 3,
     'daysNoChanges', 0,
     'guestPriority', 'regular',
-    'playDays', jsonb_build_array(1, 3, 5, 6),
+    'playDays', jsonb_build_array(1, 3, 5),
     'announcement', 'Start Time: 7am - 9/2 8am',
     'announcementBlink', true
   )

@@ -113,7 +113,7 @@ describe('buildSheetView', () => {
     const view = buildSheetView(sheetWith([member('m1')], []), NOW);
 
     expect(view.weeks.flat()).toEqual(view.dates);
-    expect(view.weeks[0]).toEqual(['2026-09-04', '2026-09-05']);
+    expect(view.weeks[0]).toEqual(['2026-09-04']);
   });
 });
 
@@ -123,7 +123,7 @@ describe('preferenceFor', () => {
 
     expect(preferenceFor(index, 'm1', FIRST_DATE)).toBe('A');
     expect(preferenceFor(index, 'm2', FIRST_DATE)).toBe('O');
-    expect(preferenceFor(index, 'm1', '2026-09-05')).toBe('O');
+    expect(preferenceFor(index, 'm1', '2026-09-07')).toBe('O');
   });
 });
 

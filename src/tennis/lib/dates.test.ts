@@ -12,27 +12,27 @@ import {
   upcomingPlayDates,
 } from './dates.js';
 
-/** Monday, Wednesday, Friday, Saturday — how the MWF group plays. */
-const PLAY_DAYS = [1, 3, 5, 6];
+/** Monday, Wednesday, Friday — how the MWF group plays. */
+const PLAY_DAYS = [1, 3, 5];
 
 // Friday 4 September 2026, the date on the sheet these tests were written from.
 const FRIDAY = new Date(2026, 8, 4);
 
 describe('upcomingPlayDates', () => {
   test('starts on today when today is itself a play day', () => {
-    expect(upcomingPlayDates(FRIDAY, PLAY_DAYS, 3)).toEqual(['2026-09-04', '2026-09-05', '2026-09-07']);
+    expect(upcomingPlayDates(FRIDAY, PLAY_DAYS, 3)).toEqual(['2026-09-04', '2026-09-07', '2026-09-09']);
   });
 
   test('skips days the group does not play', () => {
-    // Sunday 6 September: the next play day is Monday.
-    expect(upcomingPlayDates(new Date(2026, 8, 6), PLAY_DAYS, 1)).toEqual(['2026-09-07']);
+    // Saturday 5 September: the next play day is Monday.
+    expect(upcomingPlayDates(new Date(2026, 8, 5), PLAY_DAYS, 1)).toEqual(['2026-09-07']);
   });
 
   test('produces exactly the number of columns requested', () => {
     const dates = upcomingPlayDates(FRIDAY, PLAY_DAYS, 20);
 
     expect(dates).toHaveLength(20);
-    expect(dates.at(-1)).toBe('2026-10-07');
+    expect(dates.at(-1)).toBe('2026-10-19');
   });
 
   test('every date lands on a configured play day', () => {
@@ -91,9 +91,9 @@ describe('groupIntoWeeks', () => {
   test('splits into Monday-started weeks, producing the column gaps', () => {
     const weeks = groupIntoWeeks(upcomingPlayDates(FRIDAY, PLAY_DAYS, 20));
 
-    // The sheet opens mid-week with just Friday and Saturday.
-    expect(weeks[0]).toEqual(['2026-09-04', '2026-09-05']);
-    expect(weeks[1]).toEqual(['2026-09-07', '2026-09-09', '2026-09-11', '2026-09-12']);
+    // The sheet opens mid-week with just Friday.
+    expect(weeks[0]).toEqual(['2026-09-04']);
+    expect(weeks[1]).toEqual(['2026-09-07', '2026-09-09', '2026-09-11']);
     expect(weeks.flat()).toHaveLength(20);
   });
 
