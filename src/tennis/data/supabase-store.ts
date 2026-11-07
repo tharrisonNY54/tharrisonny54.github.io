@@ -7,6 +7,7 @@
  * select login IDs. See `supabase/schema.sql` for the matching SQL.
  */
 
+import { startOfToday, toISODate } from '../lib/dates.js';
 import type { Member, Settings, Sheet, Signup } from '../types.js';
 import { recordOutbox } from './local-store.js';
 import {
@@ -63,6 +64,13 @@ interface LoginRow extends MemberRow {
 
 const TOKEN_KEY = 'tennis:token';
 
+/**
+ * Supabase returns at most this many rows per request by default and silently
+ * drops the rest, so sign-ups are read in pages of this size until a short
+ * page says there are no more.
+ */
+const PAGE_SIZE = 1000;
+
 function readToken(): string {
   try {
     return window.sessionStorage.getItem(TOKEN_KEY) ?? '';
@@ -104,12 +112,15 @@ export class SupabaseSheetStore implements SheetStore {
 
   async load(sheetId: string): Promise<Sheet> {
     const id = sheetId.trim();
+    // The sheet never shows a date before today, so older sign-ups are not
+    // fetched. They stay in the database untouched; they are just not read.
+    const today = toISODate(startOfToday());
     const [sheets, members, signups] = await Promise.all([
       this.select<SheetRow[]>('sheets', `id=eq.${encodeURIComponent(id)}&select=id,settings`),
       this.select<MemberRow[]>('members', `sheet_id=eq.${encodeURIComponent(id)}&select=*&order=seat`),
-      this.select<SignupRow[]>(
+      this.selectAll<SignupRow>(
         'signups',
-        `sheet_id=eq.${encodeURIComponent(id)}&select=member_id,play_date,preference,signed_up_at`,
+        `sheet_id=eq.${encodeURIComponent(id)}&play_date=gte.${today}&select=member_id,play_date,preference,signed_up_at&order=play_date,member_id`,
       ),
     ]);
 
@@ -207,6 +218,19 @@ export class SupabaseSheetStore implements SheetStore {
 
   private async select<T>(table: string, query: string): Promise<T> {
     return this.request<T>(`${table}?${query}`, { method: 'GET' });
+  }
+
+  /**
+   * Every row of a query, however many there are. `query` must carry an
+   * `order` that is unique per row, or pages could overlap or skip rows.
+   */
+  private async selectAll<T>(table: string, query: string): Promise<T[]> {
+    const rows: T[] = [];
+    for (let offset = 0; ; offset += PAGE_SIZE) {
+      const page = await this.select<T[]>(table, `${query}&limit=${PAGE_SIZE}&offset=${offset}`);
+      rows.push(...page);
+      if (page.length < PAGE_SIZE) return rows;
+    }
   }
 
   private async rpc<T>(name: string, args: Record<string, unknown>): Promise<T> {
