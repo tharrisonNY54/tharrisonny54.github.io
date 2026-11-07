@@ -61,8 +61,8 @@ async function onLogin(event: SubmitEvent): Promise<void> {
 
   loginButton.disabled = true;
   try {
-    const member = await store.authenticate(sheetId, password);
-    if (!member) {
+    const login = await store.authenticate(sheetId, password);
+    if (!login) {
       showNotice(
         errorNotice,
         'That Sign Up Sheet ID and password did not match. Please check them and try again.',
@@ -71,10 +71,10 @@ async function onLogin(event: SubmitEvent): Promise<void> {
       return;
     }
 
-    if (rememberInput.checked) rememberLogin(sheetId, password);
+    if (rememberInput.checked) rememberLogin(login.sheetId, password);
     else forgetLogin();
 
-    startSession(sheetId, member.id);
+    startSession(login.sheetId, login.member.id);
     window.location.assign('./sheet.html');
   } catch (error) {
     showNotice(errorNotice, describeError(error), 'error');

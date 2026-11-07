@@ -13,6 +13,7 @@ import {
   sortRoster,
   StoreError,
   type EmailMessage,
+  type LoginResult,
   type PreferenceChange,
   type SheetStore,
 } from './store.js';
@@ -30,10 +31,12 @@ export class LocalSheetStore implements SheetStore {
 
   constructor(private readonly now: () => Date = () => new Date()) {}
 
-  async authenticate(sheetId: string, password: string): Promise<Member | null> {
+  async authenticate(sheetId: string, password: string): Promise<LoginResult | null> {
     const sheet = await this.load(sheetId);
     const candidate = password.trim();
-    return sheet.members.find((member) => member.loginId === candidate && !member.isGuestSlot) ?? null;
+    const member =
+      sheet.members.find((member) => member.loginId === candidate && !member.isGuestSlot) ?? null;
+    return member ? { sheetId: sheet.id, member } : null;
   }
 
   async load(sheetId: string): Promise<Sheet> {

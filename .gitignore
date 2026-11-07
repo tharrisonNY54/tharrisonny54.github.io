@@ -51,3 +51,7 @@ scripts/_tmp-*.mjs
 /6_26 Resume.pdf
 /aspera_mockup.jpg
 /aspera_satelite.png
+
+# real rosters — personal contact details never go in this public repo
+/contacts.csv
+*.roster.csv

@@ -1,7 +1,6 @@
 /**
  * Turns stored sign-ups into the view the grid renders: a status per member per
- * date, a game count per column, and the "last player to sign up for the next
- * day of play" that the original site marks with a blue seat button.
+ * date, and a game count per column.
  */
 
 import type { DisplayStatus, Member, Preference, Sheet, Signup } from '../types.js';
@@ -21,8 +20,6 @@ export interface SheetView {
   /** Dates split into calendar weeks, producing the gaps between column groups. */
   weeks: string[][];
   days: Map<string, DayView>;
-  /** Seat button highlighted blue: last to sign up for the next play date. */
-  lastSignupMemberId: string | null;
 }
 
 /** The three groups the day-by-day view lists under each date. */
@@ -60,7 +57,6 @@ export function buildSheetView(sheet: Sheet, now: Date = new Date()): SheetView 
     dates,
     weeks: groupIntoWeeks(dates),
     days,
-    lastSignupMemberId: findLastSignup(index, dates[0]),
   };
 }
 
@@ -96,23 +92,6 @@ function buildDayView(
     locked: isDateLocked(daysOut, sheet.settings),
     statuses,
   };
-}
-
-/**
- * Whoever most recently moved to `A` for the next play date. Members watch this
- * marker to see whether the sheet has moved since they last looked.
- */
-function findLastSignup(index: Map<string, Signup>, nextDate: string | undefined): string | null {
-  if (!nextDate) return null;
-
-  let latest: Signup | null = null;
-  for (const signup of index.values()) {
-    if (signup.date !== nextDate) continue;
-    if (signup.preference !== 'A' || signup.signedUpAt === null) continue;
-    if (latest === null || signup.signedUpAt > (latest.signedUpAt ?? 0)) latest = signup;
-  }
-
-  return latest?.memberId ?? null;
 }
 
 /**

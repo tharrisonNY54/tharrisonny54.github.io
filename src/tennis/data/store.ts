@@ -23,12 +23,24 @@ export interface PreferenceChange {
   preference: Preference;
 }
 
+/**
+ * A successful login. `sheetId` is the sheet's real ID as stored, which may
+ * differ in case from what was typed ("doubles40" signs in to "Doubles40").
+ */
+export interface LoginResult {
+  sheetId: string;
+  member: Member;
+}
+
 export interface SheetStore {
   /** Which backend is live, for the footer badge and the maintenance page. */
   readonly label: string;
 
-  /** Sheet ID + user password. Resolves to null when either is wrong. */
-  authenticate(sheetId: string, password: string): Promise<Member | null>;
+  /**
+   * Sheet ID + user password. The sheet ID is matched ignoring case. Resolves
+   * to null when either is wrong.
+   */
+  authenticate(sheetId: string, password: string): Promise<LoginResult | null>;
 
   load(sheetId: string): Promise<Sheet>;
 

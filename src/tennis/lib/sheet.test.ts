@@ -93,22 +93,6 @@ describe('buildSheetView', () => {
     expect(day.games).toBe(0);
   });
 
-  test('marks the last member to sign up for the next day of play', () => {
-    const members = ['m1', 'm2', 'm3'].map((id) => member(id));
-    const view = buildSheetView(
-      sheetWith(members, [signup('m1', 'A', 1), signup('m3', 'A', 9), signup('m2', 'A', 5)]),
-      NOW,
-    );
-
-    expect(view.lastSignupMemberId).toBe('m3');
-  });
-
-  test('marks nobody when the next day has no sign-ups', () => {
-    const view = buildSheetView(sheetWith([member('m1')], []), NOW);
-
-    expect(view.lastSignupMemberId).toBeNull();
-  });
-
   test('groups the columns into weeks', () => {
     const view = buildSheetView(sheetWith([member('m1')], []), NOW);
 

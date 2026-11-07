@@ -74,7 +74,7 @@ export function renderBody(
       },
     });
 
-    row.append(seatCell(member, view, options), nameCell(member));
+    row.append(seatCell(member, options), nameCell(member));
 
     forEachColumn(view, (date) => {
       row.append(statusCell(member, sheet, view.days.get(date)));
@@ -110,14 +110,12 @@ export function renderFoot(
 
 /* ------------------------------------------------------------------ cells */
 
-function seatCell(member: Member, view: SheetView, options: GridOptions): HTMLTableCellElement {
+function seatCell(member: Member, options: GridOptions): HTMLTableCellElement {
   const cell = el('td', { className: 'seat-cell' });
-  const isLastSignup = view.lastSignupMemberId === member.id;
 
   const button = el('button', {
     className: 'seat',
     text: String(member.seat),
-    dataset: { lastSignup: String(isLastSignup) },
     attrs: {
       type: 'button',
       'aria-label': options.canEditOthers
@@ -125,10 +123,6 @@ function seatCell(member: Member, view: SheetView, options: GridOptions): HTMLTa
         : `Row ${member.seat}, ${fullName(member)}`,
     },
   });
-
-  if (isLastSignup) {
-    button.title = 'Last member to sign up for the next day of play';
-  }
 
   // Only administrators can point the edit row at somebody else.
   if (options.canEditOthers) {

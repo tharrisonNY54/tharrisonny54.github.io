@@ -116,6 +116,18 @@ While it is off:
 7. Set `emailEnabled: true`, then use **Send Welcome** on your own row first and
    confirm it arrives before touching anybody else's.
 
+## More than one group
+
+Every group shares the same tables and the same site; the Sign Up Sheet ID
+typed at login picks the group, matched ignoring case (`doubles40` signs in to
+`Doubles40`). Groups cannot see each other's rows — every policy is scoped to
+the sheet the session token was issued for.
+
+To add a group, copy `supabase/new-sheet.sql` into the SQL editor, change the
+five values at the top (sheet ID, title, play days, admin name, admin
+password), and run it. Then sign in with the new ID and add members from
+Website Maint. Edit the values in the SQL editor, not in this public repo.
+
 ### What the security model does and does not do
 
 The publishable key is public, so nothing is protected by "only our site calls

@@ -1,6 +1,6 @@
 import '../styles/tennis.css';
 
-import { getStore, isDemoMode, isEmailMuted } from '../data/index.js';
+import { getStore, isDemoMode, isEmailMuted, nextSeat } from '../data/index.js';
 import { readOutbox } from '../data/local-store.js';
 import { announcementEmail, welcomeEmail } from '../lib/mail.js';
 import { requireSession } from '../lib/session.js';
@@ -197,11 +197,54 @@ function onEditMember(): void {
   showNotice(notice, `Editing ${fullName(member)}. Change the fields, then Submit Changes.`, 'info');
 }
 
-function onAddMember(): void {
+/**
+ * Adds the member typed into the form straight away — no Submit Changes.
+ * When the form is showing an existing member, it is cleared first so the
+ * administrator can type the new member in and press Add New Member again.
+ */
+async function onAddMember(): Promise<void> {
+  if (editingId !== null) {
+    startNewMember();
+    return;
+  }
+
+  const draft = readMemberForm();
+  const problem = validateMemberDraft(draft) ?? loginIdClash(draft.loginId, null);
+  if (problem) {
+    showNotice(notice, problem, 'error');
+    return;
+  }
+
+  const member: Member = {
+    ...draft,
+    id: `m${Date.now().toString(36)}`,
+    seat: nextSeat(sheet.members),
+    isGuestSlot: false,
+  };
+
+  const saved = await save(
+    () => store.saveMember(sheet.id, member),
+    `${fullName(member)} has been added to the sheet.`,
+  );
+  if (saved) {
+    editingId = member.id;
+    picker.value = member.id;
+  }
+}
+
+function startNewMember(): void {
   editingId = null;
   picker.value = '';
   clearMemberForm();
-  showNotice(notice, 'Fill in the new member’s details, then Submit Changes.', 'info');
+  showNotice(notice, 'Type the new member’s details below, then press Add New Member.', 'info');
+}
+
+/** Login IDs are passwords, so two members on one sheet cannot share one. */
+function loginIdClash(loginId: string, selfId: string | null): string | null {
+  const other = sheet.members.find(
+    (member) => member.loginId === loginId.trim() && member.id !== selfId,
+  );
+  return other ? `That Login ID is already used by ${fullName(other)}.` : null;
 }
 
 function onResetForm(): void {
@@ -214,29 +257,25 @@ function onResetForm(): void {
 async function onSubmitMember(event: SubmitEvent): Promise<void> {
   event.preventDefault();
 
+  const existing = editingId
+    ? sheet.members.find((member) => member.id === editingId)
+    : undefined;
+
+  // With no member being edited, Submit Changes behaves like Add New Member.
+  if (!existing) {
+    await onAddMember();
+    return;
+  }
+
   const draft = readMemberForm();
-  const problem = validateMemberDraft(draft);
+  const problem = validateMemberDraft(draft) ?? loginIdClash(draft.loginId, existing.id);
   if (problem) {
     showNotice(notice, problem, 'error');
     return;
   }
 
-  const existing = editingId
-    ? sheet.members.find((member) => member.id === editingId)
-    : undefined;
-
-  const member: Member = {
-    ...(existing ?? {
-      id: `m${Date.now().toString(36)}`,
-      seat: sheet.members.length + 1,
-      isGuestSlot: false,
-    }),
-    ...draft,
-  } as Member;
-
+  const member: Member = { ...existing, ...draft };
   await save(() => store.saveMember(sheet.id, member), `${fullName(member)} has been saved.`);
-  editingId = member.id;
-  picker.value = member.id;
 }
 
 async function onDeleteMember(): Promise<void> {
@@ -319,13 +358,16 @@ async function onResetDemo(): Promise<void> {
 
 /* -------------------------------------------------------------- shared */
 
-async function save(action: () => Promise<Sheet>, successMessage: string): Promise<void> {
+/** Runs a write, refreshes the page from its result, and reports whether it worked. */
+async function save(action: () => Promise<Sheet>, successMessage: string): Promise<boolean> {
   try {
     sheet = await action();
     refresh();
     showNotice(notice, successMessage, 'success');
+    return true;
   } catch (error) {
     showNotice(notice, describeError(error), 'error');
+    return false;
   }
 }
 

@@ -39,7 +39,6 @@
   --row-band: #d8e9f6;
   --row-hover: #f3eecd;
   --seat-face: #f6cfa4;
-  --seat-marked: #37d4e8;
 
   --button-face: #f4cda4;
   --button-face-hover: #f8dcbd;
@@ -337,13 +336,6 @@ body.tennis {
 
 .seat:not([disabled]):hover {
   background: #fbe0c4;
-}
-
-/* "The numbered button colored blue indicates the last player to sign up." */
-.seat[data-last-signup='true'] {
-  background: var(--seat-marked);
-  border-color: #1a8fa0;
-  color: #06323a;
 }
 
 /* ------------------------------------------------------------ status cells */

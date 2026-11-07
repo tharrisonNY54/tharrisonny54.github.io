@@ -33,6 +33,9 @@ create table if not exists public.sheets (
   created_at  timestamptz not null default now()
 );
 
+-- Sheet IDs are typed ignoring case at login, so two may not differ only by case.
+create unique index if not exists sheets_id_lower_idx on public.sheets (lower(id));
+
 create table if not exists public.members (
   id            text primary key,
   sheet_id      text not null references public.sheets (id) on delete cascade,
@@ -169,9 +172,11 @@ declare
   v_member public.members%rowtype;
   v_token  uuid;
 begin
+  -- The sheet ID is matched ignoring case, so "doubles40" reaches "Doubles40".
+  -- The stored spelling is returned, and the browser uses that from then on.
   select * into v_member
   from public.members m
-  where m.sheet_id = p_sheet_id
+  where lower(m.sheet_id) = lower(btrim(p_sheet_id))
     and m.login_id = btrim(p_password)
     and not m.is_guest_slot;
 

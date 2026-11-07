@@ -9,7 +9,14 @@
 
 import type { Member, Settings, Sheet, Signup } from '../types.js';
 import { recordOutbox } from './local-store.js';
-import { sortRoster, StoreError, type EmailMessage, type PreferenceChange, type SheetStore } from './store.js';
+import {
+  sortRoster,
+  StoreError,
+  type EmailMessage,
+  type LoginResult,
+  type PreferenceChange,
+  type SheetStore,
+} from './store.js';
 
 export interface SupabaseConfig {
   url: string;
@@ -80,7 +87,7 @@ export class SupabaseSheetStore implements SheetStore {
     return this.config.emailEnabled ? 'Live' : 'Live · email off';
   }
 
-  async authenticate(sheetId: string, password: string): Promise<Member | null> {
+  async authenticate(sheetId: string, password: string): Promise<LoginResult | null> {
     const rows = await this.rpc<LoginRow[]>('tennis_login', {
       p_sheet_id: sheetId.trim(),
       p_password: password.trim(),
@@ -90,7 +97,9 @@ export class SupabaseSheetStore implements SheetStore {
 
     // Every later request is authorised by this token, not by the anon key.
     writeToken(row.token);
-    return toMember(row);
+    // The server matches the sheet ID ignoring case and returns the stored
+    // spelling, which is what every later query has to use.
+    return { sheetId: row.sheet_id, member: toMember(row) };
   }
 
   async load(sheetId: string): Promise<Sheet> {
